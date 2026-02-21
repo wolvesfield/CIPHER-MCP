@@ -4,6 +4,126 @@ Enterprise Model Context Protocol (MCP) Deployment Framework — 24-server matri
 
 ---
 
+## Quick Start (Post-Merge)
+
+Follow these five steps after cloning to go from zero to a live 24-server mesh inside VS Code / Cursor / Claude Desktop.
+
+### Step 1 — Install prerequisites
+
+```bash
+# Node 18+ (https://nodejs.org)
+node --version   # must be >= 18
+
+# Python 3.10+ with uv
+pip install uv
+
+# Optional but recommended — enables .env auto-loading in the compiler
+pip install python-dotenv
+```
+
+### Step 2 — Configure your secrets
+
+```bash
+cp .env.example .env
+```
+
+Open `.env` and fill in every `REPLACE_ME` value. Key entries:
+
+| Variable | Where to get it |
+|---|---|
+| `GITHUB_ENTERPRISE_TOKEN` | https://github.com/settings/tokens — Fine-Grained PAT, authorise for the **nochef** enterprise |
+| `SUPABASE_ACCESS_TOKEN` | https://supabase.com/dashboard/account/tokens (`sbp_…`) |
+| `TAVILY_API_KEY` | https://app.tavily.com |
+| `MEM0_API_KEY` | https://app.mem0.ai |
+| `KUBECONFIG` | Absolute path to your local `~/.kube/config` |
+| `SOLANA_RPC_URL` | `https://api.mainnet-beta.solana.com` (public, no key needed) |
+
+### Step 3 — Validate your environment
+
+```bash
+python mcp_enterprise_compiler.py --validate-env
+```
+
+Expected output when all variables are set:
+
+```
+[+] validate-env PASSED -- all 24 server env vars are set and non-placeholder.
+```
+
+Fix any reported `NOT SET` or `still a placeholder` lines before continuing.
+
+### Step 4 — AOT compile the mesh
+
+```bash
+python mcp_enterprise_compiler.py
+```
+
+This pre-installs every `npx`/`uvx` package into `.mcp_env/` and writes
+`mcp-compiled.json` with absolute binary paths. Typical output:
+
+```
+[1/3] Bootstrapping isolated environments ...
+[2/3] Installing 16 Node package(s) ...
+[2/3] Installing 5 Python package(s) ...
+[+] Compiled 24 servers -> mcp-compiled.json
+    Boot latency target: <150 ms per server.
+    Point your MCP host at mcp-compiled.json to launch the ecosystem.
+```
+
+Verify no `npx` or `uvx` strings remain in the compiled output:
+
+```bash
+grep -c '"npx"\|"uvx"' mcp-compiled.json   # should print 0
+```
+
+### Step 5 — Wire up your MCP host
+
+#### VS Code / GitHub Copilot Chat
+
+Add to your VS Code `settings.json` (or `.vscode/mcp.json`):
+
+```json
+{
+  "mcp": {
+    "servers": "<contents of mcp-compiled.json>.mcpServers"
+  }
+}
+```
+
+Or use the **MCP: Add Server** command and point it at the absolute path of
+`mcp-compiled.json`.
+
+Reload the window, then type `#` in Copilot Chat — you should see tools from
+all 24 servers, e.g. `#supabase-mcp`, `#solana-blockchain`.
+
+#### Cursor
+
+Open **Settings → MCP** and paste the contents of `mcp-compiled.json` into the
+servers list, or set the config file path to the absolute path of
+`mcp-compiled.json`.
+
+#### Claude Desktop
+
+In `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS)
+or `%APPDATA%\Claude\claude_desktop_config.json` (Windows), merge the
+`mcpServers` block from `mcp-compiled.json` into the existing config.
+
+---
+
+## Verify GHEC (wolvesfield org) access
+
+Once the mesh is running, ask your agent:
+
+> "List all repositories in the wolvesfield organization."
+
+The `github-enterprise-cloud` server will call the GitHub API with your
+`GITHUB_ENTERPRISE_TOKEN` and return the org's repository list.  A `401` or
+SAML error means the token has not been authorised for the **nochef** enterprise
+SSO — visit https://github.com/settings/tokens, find the PAT, and click
+**Authorise** next to the nochef organisation.
+
+---
+
 ## Table of Contents
 
 1. [Architecture Overview](#architecture-overview)
