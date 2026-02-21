@@ -101,6 +101,9 @@ python mcp_enterprise_compiler.py
 
 # Custom paths
 python mcp_enterprise_compiler.py --input mcp-enterprise.json --output mcp-compiled.json
+
+# Pre-flight env check — verify every ${VAR} is set and not still REPLACE_ME
+python mcp_enterprise_compiler.py --validate-env
 ```
 
 What happens:
@@ -115,6 +118,19 @@ What happens:
 4. `validate_env_vars()` — warns about any `${VAR}` references not present in
    the environment so missing secrets are caught before deployment.
 5. Emits `mcp-compiled.json` — point your MCP host at this file.
+
+### `--validate-env` pre-flight check
+
+Run this after filling in `.env` and **before** launching the server mesh:
+
+```
+$ python mcp_enterprise_compiler.py --validate-env
+[+] validate-env PASSED -- all 24 server env vars are set and non-placeholder.
+```
+
+If any variable is missing or still contains a `REPLACE_ME` value the command
+exits with code `1` and lists every offending variable by server name so you
+can fix them individually.
 
 > `.mcp_env/` and `mcp-compiled.json` are listed in `.gitignore` because they
 > contain absolute local paths and compiled binaries.

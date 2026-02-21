@@ -1,7 +1,7 @@
 """
 mcp_enterprise_compiler.py
 ==========================
-Ahead-Of-Time (AOT) compiler for the CIPHER-MCP 30-server ecosystem.
+Ahead-Of-Time (AOT) compiler for the CIPHER-MCP 24-server ecosystem.
 
 What it does
 ------------
@@ -14,6 +14,7 @@ What it does
 Usage
 -----
     python mcp_enterprise_compiler.py [--input mcp-enterprise.json] [--output mcp-compiled.json]
+    python mcp_enterprise_compiler.py --validate-env
 
 The .env file (copied from .env.example) must be present so that env-var
 placeholders are validated before compilation.
@@ -35,6 +36,17 @@ ENV_DIR = Path(".mcp_env").resolve()
 NODE_DIR = ENV_DIR / "node"
 PY_DIR = ENV_DIR / "python"
 IS_WIN = sys.platform == "win32"
+
+# Values that indicate a variable has not been filled in from the template
+_PLACEHOLDER_PATTERNS = (
+    "REPLACE_ME",
+    "sbp_REPLACE_ME",
+    "tvly-REPLACE_ME",
+    "m0-REPLACE_ME",
+    "github_pat_REPLACE_ME",
+    "xoxb-REPLACE_ME",
+    "T0REPLACE_ME",
+)
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -171,13 +183,55 @@ def validate_env_vars(servers: dict) -> list[str]:
     return missing
 
 
+def validate_env_strict(input_path: Path) -> None:
+    """
+    --validate-env mode: load .env, then check that every ${VAR} placeholder
+    referenced in the manifest is set AND does not still contain a REPLACE_ME
+    or placeholder-style value.  Exits 0 on success, 1 on any failure.
+    """
+    try:
+        from dotenv import load_dotenv  # type: ignore
+        load_dotenv()
+        print("[*] Loaded .env via python-dotenv")
+    except ImportError:
+        print("[*] python-dotenv not installed -- reading os.environ only")
+
+    if not input_path.exists():
+        print(f"[!] Input file not found: {input_path}", file=sys.stderr)
+        sys.exit(1)
+
+    with input_path.open() as fh:
+        config: dict = json.load(fh)
+
+    servers: dict = config.get("mcpServers", {})
+    errors: list[str] = []
+
+    for server_name, server in servers.items():
+        for env_key, val in server.get("env", {}).items():
+            if not (val.startswith("${") and val.endswith("}")):
+                continue
+            var = val[2:-1]
+            actual = os.environ.get(var, "")
+            if not actual:
+                errors.append(f"  [{server_name}] {var} -- NOT SET")
+            elif any(p in actual for p in _PLACEHOLDER_PATTERNS):
+                errors.append(f"  [{server_name}] {var} -- still a placeholder ({actual!r})")
+
+    if errors:
+        print(f"\n[x] validate-env FAILED -- {len(errors)} issue(s):\n" + "\n".join(errors))
+        print("\n    Fill in all values in your .env file and re-run.")
+        sys.exit(1)
+    else:
+        print(f"\n[+] validate-env PASSED -- all {len(servers)} server env vars are set and non-placeholder.")
+
+
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="AOT compiler for the CIPHER-MCP 30-server ecosystem."
+        description="AOT compiler for the CIPHER-MCP 24-server ecosystem."
     )
     parser.add_argument(
         "--input", default="mcp-enterprise.json",
@@ -187,9 +241,24 @@ def main() -> None:
         "--output", default="mcp-compiled.json",
         help="Compiled output (default: mcp-compiled.json)"
     )
+    parser.add_argument(
+        "--validate-env", action="store_true",
+        help=(
+            "Load .env and verify every ${VAR} placeholder in the manifest "
+            "is set and is not still a REPLACE_ME value. Exits 0 on success."
+        )
+    )
     args = parser.parse_args()
 
     input_path = Path(args.input)
+
+    # ---------------------------------------------------------------------- #
+    # --validate-env: standalone pre-flight check, does not compile
+    # ---------------------------------------------------------------------- #
+    if args.validate_env:
+        validate_env_strict(input_path)
+        return
+
     output_path = Path(args.output)
 
     if not input_path.exists():
