@@ -25,6 +25,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -36,6 +37,7 @@ ENV_DIR = Path(".mcp_env").resolve()
 NODE_DIR = ENV_DIR / "node"
 PY_DIR = ENV_DIR / "python"
 IS_WIN = sys.platform == "win32"
+NPM_CMD = "npm.cmd" if IS_WIN else "npm"
 
 # Values that indicate a variable has not been filled in from the template
 _PLACEHOLDER_PATTERNS = (
@@ -60,18 +62,67 @@ def _run(cmd: list[str], **kwargs) -> subprocess.CompletedProcess:
 
 def _node_bin(pkg: str) -> Path:
     """Return the expected local binary path for an npm package."""
-    name = pkg.split("/")[-1]
+    package_name = _npm_package_name(pkg)
+    name = package_name.split("/")[-1]
     if IS_WIN:
         return NODE_DIR / "node_modules" / ".bin" / f"{name}.cmd"
     return NODE_DIR / "node_modules" / ".bin" / name
 
 
+def _node_bin_from_installed(pkg: str) -> Path:
+    package_name = _npm_package_name(pkg)
+    package_json = NODE_DIR / "node_modules" / Path(package_name) / "package.json"
+    if package_json.exists():
+        try:
+            with package_json.open(encoding="utf-8") as fh:
+                pkg_meta = json.load(fh)
+            bin_field = pkg_meta.get("bin")
+            if isinstance(bin_field, str):
+                bin_name = package_name.split("/")[-1]
+            elif isinstance(bin_field, dict) and bin_field:
+                bin_name = next(iter(bin_field.keys()))
+            else:
+                bin_name = package_name.split("/")[-1]
+            if IS_WIN:
+                return NODE_DIR / "node_modules" / ".bin" / f"{bin_name}.cmd"
+            return NODE_DIR / "node_modules" / ".bin" / bin_name
+        except Exception:
+            pass
+    return _node_bin(pkg)
+
+
 def _py_bin(pkg: str) -> Path:
     """Return the expected local binary path for a Python package."""
-    name = pkg.split("[")[0]  # strip extras, e.g. package[extra]
+    name = _pip_package_name(pkg)
     scripts = "Scripts" if IS_WIN else "bin"
     suffix = ".exe" if IS_WIN else ""
     return PY_DIR / scripts / f"{name}{suffix}"
+
+
+def _py_bin_from_installed(pkg: str) -> Path:
+    scripts_dir = PY_DIR / ("Scripts" if IS_WIN else "bin")
+    base_name = _pip_package_name(pkg)
+    candidates = [
+        f"{base_name}.exe" if IS_WIN else base_name,
+        f"{base_name.replace('-', '_')}.exe" if IS_WIN else base_name.replace('-', '_'),
+    ]
+    for candidate in candidates:
+        candidate_path = scripts_dir / candidate
+        if candidate_path.exists():
+            return candidate_path
+    return _py_bin(pkg)
+
+
+def _npm_package_name(spec: str) -> str:
+    """Extract npm package name from a possibly version-pinned spec."""
+    match = re.match(r"^(@[^/]+/[^@]+|[^@]+)(?:@.+)?$", spec)
+    return match.group(1) if match else spec
+
+
+def _pip_package_name(spec: str) -> str:
+    """Extract pip distribution name from a possibly constrained spec."""
+    base = spec.split("[")[0]
+    return re.split(r"[<>=!~]", base, maxsplit=1)[0]
 
 
 # ---------------------------------------------------------------------------
@@ -85,7 +136,7 @@ def bootstrap_environments() -> None:
     PY_DIR.mkdir(parents=True, exist_ok=True)
 
     if not (NODE_DIR / "package.json").exists():
-        _run(["npm", "init", "-y"], cwd=NODE_DIR,
+        _run([NPM_CMD, "init", "-y"], cwd=NODE_DIR,
              stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     if not (PY_DIR / "pyvenv.cfg").exists():
@@ -99,7 +150,7 @@ def bootstrap_environments() -> None:
 
 def collect_dependencies(
     servers: dict,
-) -> tuple[set[str], set[str], dict]:
+) -> tuple[dict[str, list[str]], dict[str, list[str]], dict]:
     """
     Walk the server manifest and collect npm / pip packages to pre-install.
 
@@ -108,10 +159,10 @@ def collect_dependencies(
     - Replaces 'uvx <pkg>' with the local binary path.
     - Replaces literal secret values inside 'env' with ${VAR_NAME} placeholders.
 
-    Returns (node_packages, python_packages, mutated_servers_dict).
+    Returns (node_package_to_servers, python_package_to_servers, mutated_servers_dict).
     """
-    node_pkgs: set[str] = set()
-    py_pkgs: set[str] = set()
+    node_pkgs: dict[str, list[str]] = {}
+    py_pkgs: dict[str, list[str]] = {}
 
     for name, server in servers.items():
         cmd = server.get("command", "")
@@ -121,15 +172,21 @@ def collect_dependencies(
         # Sanitize env block: replace literal values with ${VAR} references
         # ------------------------------------------------------------------
         if "env" in server:
-            server["env"] = {k: f"${{{k}}}" for k in server["env"]}
+            sanitized_env: dict[str, str] = {}
+            for key, value in server["env"].items():
+                if isinstance(value, str) and value.startswith("${") and value.endswith("}"):
+                    sanitized_env[key] = value
+                else:
+                    sanitized_env[key] = f"${{{key}}}"
+            server["env"] = sanitized_env
 
         # ------------------------------------------------------------------
         # npx -y <package> [extra-args…]
         # ------------------------------------------------------------------
         if cmd == "npx" and len(args) >= 2 and args[0] == "-y":
             pkg = args[1]
-            node_pkgs.add(pkg)
-            server["command"] = str(_node_bin(pkg))
+            node_pkgs.setdefault(pkg, []).append(name)
+            server["__aot_node_pkg"] = pkg
             server["args"] = args[2:]
 
         # ------------------------------------------------------------------
@@ -137,8 +194,8 @@ def collect_dependencies(
         # ------------------------------------------------------------------
         elif cmd == "uvx" and args:
             pkg = args[0]
-            py_pkgs.add(pkg)
-            server["command"] = str(_py_bin(pkg))
+            py_pkgs.setdefault(pkg, []).append(name)
+            server["__aot_py_pkg"] = pkg
             server["args"] = args[1:]
 
     return node_pkgs, py_pkgs, servers
@@ -148,19 +205,32 @@ def collect_dependencies(
 # Installation
 # ---------------------------------------------------------------------------
 
-def install_node_packages(pkgs: set[str]) -> None:
+def install_node_packages(pkgs: dict[str, list[str]], servers: dict) -> None:
     if not pkgs:
         return
     print(f"[2/3] Installing {len(pkgs)} Node package(s) …")
-    _run(["npm", "install", "--prefix", str(NODE_DIR)] + sorted(pkgs))
+    for pkg in sorted(pkgs):
+        _run([NPM_CMD, "install", "--prefix", str(NODE_DIR), pkg])
 
 
-def install_python_packages(pkgs: set[str]) -> None:
+def install_python_packages(pkgs: dict[str, list[str]], servers: dict) -> None:
     if not pkgs:
         return
     print(f"[2/3] Installing {len(pkgs)} Python package(s) …")
     pip = PY_DIR / ("Scripts" if IS_WIN else "bin") / ("pip.exe" if IS_WIN else "pip")
-    _run([str(pip), "install", "--upgrade"] + sorted(pkgs))
+    for pkg in sorted(pkgs):
+        _run([str(pip), "install", "--upgrade", pkg])
+
+
+def finalize_server_commands(servers: dict) -> None:
+    for server in servers.values():
+        node_pkg = server.pop("__aot_node_pkg", None)
+        if node_pkg:
+            server["command"] = str(_node_bin_from_installed(node_pkg))
+
+        py_pkg = server.pop("__aot_py_pkg", None)
+        if py_pkg:
+            server["command"] = str(_py_bin_from_installed(py_pkg))
 
 
 # ---------------------------------------------------------------------------
@@ -248,6 +318,10 @@ def main() -> None:
             "is set and is not still a REPLACE_ME value. Exits 0 on success."
         )
     )
+    parser.add_argument(
+        "--skip-install", action="store_true",
+        help="Skip npm/pip install steps and only rewrite commands into local binary paths."
+    )
     args = parser.parse_args()
 
     input_path = Path(args.input)
@@ -276,8 +350,11 @@ def main() -> None:
 
     node_pkgs, py_pkgs, servers = collect_dependencies(servers)
 
-    install_node_packages(node_pkgs)
-    install_python_packages(py_pkgs)
+    if not args.skip_install:
+        install_node_packages(node_pkgs, servers)
+        install_python_packages(py_pkgs, servers)
+
+    finalize_server_commands(servers)
 
     # ------------------------------------------------------------------ #
     # Warn about unset env vars (load .env first if dotenv is available)

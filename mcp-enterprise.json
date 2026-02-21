@@ -2,72 +2,72 @@
   "mcpServers": {
     "sqlite-audit-db": {
       "command": "uvx",
-      "args": ["mcp-server-sqlite", "--db-path", "/absolute/path/to/your/audit_store.db"]
+      "args": ["mcp-server-sqlite==2025.4.25", "--db-path", "/absolute/path/to/your/audit_store.db"]
     },
     "filesystem": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/absolute/path/to/your/workspace"]
+      "args": ["-y", "@modelcontextprotocol/server-filesystem@2026.1.14", "/absolute/path/to/your/workspace"]
     },
     "fetch": {
       "command": "uvx",
-      "args": ["mcp-server-fetch"]
+      "args": ["mcp-server-fetch==2025.4.7"]
     },
     "github": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "args": ["-y", "@modelcontextprotocol/server-github@2025.4.8"],
       "env": {
         "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_ENTERPRISE_TOKEN}"
       }
     },
     "playwright": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-playwright"]
+      "args": ["-y", "@playwright/mcp@0.0.68"]
     },
     "puppeteer": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-puppeteer"]
+      "args": ["-y", "@modelcontextprotocol/server-puppeteer@2025.5.12"]
     },
     "chrome-devtools": {
       "command": "npx",
-      "args": ["-y", "mcp-chrome-devtools"]
+      "args": ["-y", "chrome-devtools-mcp@0.17.3"]
     },
     "browser-devtools-generic": {
       "command": "npx",
-      "args": ["-y", "mcp-browser-devtools"]
+      "args": ["-y", "browser-devtools-mcp@0.2.23"]
     },
     "tavily-search": {
       "command": "npx",
-      "args": ["-y", "@tavily/mcp-server"],
+      "args": ["-y", "tavily-mcp@0.2.17"],
       "env": {
         "TAVILY_API_KEY": "${TAVILY_API_KEY}"
       }
     },
     "supabase-postgres": {
       "command": "npx",
-      "args": ["-y", "@supabase/mcp-server-supabase"],
+      "args": ["-y", "@supabase/mcp-server-supabase@0.6.3"],
       "env": {
         "SUPABASE_ACCESS_TOKEN": "${SUPABASE_ACCESS_TOKEN}"
       }
     },
     "desktop-commander": {
       "command": "npx",
-      "args": ["-y", "mcp-desktop-commander"]
+      "args": ["-y", "@wonderwhy-er/desktop-commander@0.2.37"]
     },
     "generic-openapi": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-openapi", "/path/to/generic-swagger-or-openapi.json"]
+      "args": ["-y", "mcp-openapi-schema-explorer@1.3.3", "/path/to/generic-swagger-or-openapi.json"]
     },
     "evm-blockchain": {
       "command": "npx",
-      "args": ["-y", "@mcpdotdirect/evm-mcp-server"]
+      "args": ["-y", "@mcpdotdirect/evm-mcp-server@2.0.4"]
     },
     "tatum-blockchain": {
       "command": "npx",
-      "args": ["-y", "@tatumio/blockchain-mcp"]
+      "args": ["-y", "@tatumio/blockchain-mcp@1.0.5"]
     },
     "dbhub-io": {
       "command": "npx",
-      "args": ["-y", "mcp-dbhub"]
+      "args": ["-y", "@blocklet/dbhub@0.2.9"]
     },
     "context7": {
       "command": "node",
@@ -79,25 +79,25 @@
     },
     "docker-executor": {
       "command": "npx",
-      "args": ["-y", "@0xshariq/docker-mcp-server"]
+      "args": ["-y", "@0xshariq/docker-mcp-server@2.0.4"]
     },
     "figma-remote": {
       "url": "https://mcp.figma.com/mcp"
     },
     "mem0-memory": {
-      "command": "uvx",
-      "args": ["mem0-mcp-server"],
+      "command": "npx",
+      "args": ["-y", "@mem0/mcp-server@0.0.1"],
       "env": {
         "MEM0_API_KEY": "${MEM0_API_KEY}"
       }
     },
     "python-secure-sandbox": {
       "command": "uvx",
-      "args": ["mcp-server-python"]
+      "args": ["mcp-python==0.1.4"]
     },
     "github-enterprise-cloud": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "args": ["-y", "@modelcontextprotocol/server-github@2025.4.8"],
       "env": {
         "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_ENTERPRISE_TOKEN}",
         "GITHUB_API_URL": "${GITHUB_API_URL}"
@@ -105,14 +105,14 @@
     },
     "kubernetes-cluster": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-kubernetes"],
+      "args": ["-y", "kubernetes-mcp-server@0.0.57"],
       "env": {
         "KUBECONFIG": "${KUBECONFIG}"
       }
     },
     "solana-blockchain": {
       "command": "npx",
-      "args": ["-y", "@solana/mcp-server"],
+      "args": ["-y", "solana-mcp@1.0.1"],
       "env": {
         "SOLANA_RPC_URL": "${SOLANA_RPC_URL}"
       }

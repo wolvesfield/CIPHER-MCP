@@ -41,7 +41,7 @@ Open `.env` and fill in every `REPLACE_ME` value. Key entries:
 ### Step 3 — Validate your environment
 
 ```bash
-python mcp_enterprise_compiler.py --validate-env
+py -3 mcp_enterprise_compiler.py --validate-env
 ```
 
 Expected output when all variables are set:
@@ -55,7 +55,7 @@ Fix any reported `NOT SET` or `still a placeholder` lines before continuing.
 ### Step 4 — AOT compile the mesh
 
 ```bash
-python mcp_enterprise_compiler.py
+py -3 mcp_enterprise_compiler.py
 ```
 
 This pre-installs every `npx`/`uvx` package into `.mcp_env/` and writes
@@ -74,6 +74,18 @@ Verify no `npx` or `uvx` strings remain in the compiled output:
 
 ```bash
 grep -c '"npx"\|"uvx"' mcp-compiled.json   # should print 0
+```
+
+PowerShell equivalent:
+
+```powershell
+Select-String -Path .\mcp-compiled.json -Pattern '"command"\s*:\s*"(npx|uvx)"'
+```
+
+For faster regeneration after dependencies are already installed:
+
+```bash
+py -3 mcp_enterprise_compiler.py --skip-install
 ```
 
 ### Step 5 — Wire up your MCP host
@@ -124,15 +136,44 @@ SSO — visit https://github.com/settings/tokens, find the PAT, and click
 
 ---
 
+## Daily Use Checklist
+
+- Open VS Code in this repo and run `Ctrl+Shift+B` (default task: Validate & Compile).
+- Confirm the task exits cleanly with `validate-env PASSED` and `Compiled 24 servers`.
+- If you changed package pins in `mcp-enterprise.json`, run full rebuild once:
+  - `py -3 mcp_enterprise_compiler.py`
+- If you changed only env values or paths, run fast rebuild:
+  - `py -3 mcp_enterprise_compiler.py --skip-install`
+- Test MCP quickly in Copilot Chat:
+  - `List all repositories in the wolvesfield organization.`
+- If tools do not appear immediately, run `Developer: Reload Window` in VS Code.
+
+---
+
 ## Table of Contents
 
-1. [Architecture Overview](#architecture-overview)
-2. [Prerequisites](#prerequisites)
-3. [Phase 1 — GHEC Authentication & Secrets Matrix](#phase-1--ghec-authentication--secrets-matrix)
-4. [Phase 2 — AOT Compilation (eliminating npx/uvx latency)](#phase-2--aot-compilation-eliminating-npxuvx-latency)
-5. [Phase 3 — Master Agent Copilot Prompt](#phase-3--master-agent-copilot-prompt)
-6. [Phase 4 — Deployment Telemetry & Failure Analysis](#phase-4--deployment-telemetry--failure-analysis)
-7. [The Complete 24-Server Payload](#the-complete-24-server-payload)
+- [CIPHER-MCP](#cipher-mcp)
+  - [Quick Start (Post-Merge)](#quick-start-post-merge)
+    - [Step 1 — Install prerequisites](#step-1--install-prerequisites)
+    - [Step 2 — Configure your secrets](#step-2--configure-your-secrets)
+    - [Step 3 — Validate your environment](#step-3--validate-your-environment)
+    - [Step 4 — AOT compile the mesh](#step-4--aot-compile-the-mesh)
+    - [Step 5 — Wire up your MCP host](#step-5--wire-up-your-mcp-host)
+      - [VS Code / GitHub Copilot Chat](#vs-code--github-copilot-chat)
+      - [Cursor](#cursor)
+      - [Claude Desktop](#claude-desktop)
+  - [Verify GHEC (wolvesfield org) access](#verify-ghec-wolvesfield-org-access)
+  - [Daily Use Checklist](#daily-use-checklist)
+  - [Table of Contents](#table-of-contents)
+  - [Architecture Overview](#architecture-overview)
+  - [Prerequisites](#prerequisites)
+  - [Phase 1 — GHEC Authentication \& Secrets Matrix](#phase-1--ghec-authentication--secrets-matrix)
+  - [Phase 2 — AOT Compilation (eliminating npx/uvx latency)](#phase-2--aot-compilation-eliminating-npxuvx-latency)
+    - [`--validate-env` pre-flight check](#--validate-env-pre-flight-check)
+  - [Phase 3 — Master Agent Copilot Prompt](#phase-3--master-agent-copilot-prompt)
+  - [Phase 4 — Deployment Telemetry \& Failure Analysis](#phase-4--deployment-telemetry--failure-analysis)
+  - [The Complete 24-Server Payload](#the-complete-24-server-payload)
+  - [License](#license)
 
 ---
 
