@@ -1,6 +1,6 @@
 # CIPHER-MCP
 
-Enterprise Model Context Protocol (MCP) Deployment Framework — 30-server matrix with GHEC (GitHub Enterprise Cloud) integration, zero-trust secrets management, and Ahead-Of-Time (AOT) compilation for sub-150 ms boot latency.
+Enterprise Model Context Protocol (MCP) Deployment Framework — 24-server matrix with GHEC (GitHub Enterprise Cloud) integration, zero-trust secrets management, and Ahead-Of-Time (AOT) compilation for sub-150 ms boot latency.
 
 ---
 
@@ -12,7 +12,7 @@ Enterprise Model Context Protocol (MCP) Deployment Framework — 30-server matri
 4. [Phase 2 — AOT Compilation (eliminating npx/uvx latency)](#phase-2--aot-compilation-eliminating-npxuvx-latency)
 5. [Phase 3 — Master Agent Copilot Prompt](#phase-3--master-agent-copilot-prompt)
 6. [Phase 4 — Deployment Telemetry & Failure Analysis](#phase-4--deployment-telemetry--failure-analysis)
-7. [The Complete 30-Server Payload](#the-complete-30-server-payload)
+7. [The Complete 24-Server Payload](#the-complete-24-server-payload)
 
 ---
 
@@ -21,7 +21,7 @@ Enterprise Model Context Protocol (MCP) Deployment Framework — 30-server matri
 ```
 CIPHER-MCP/
 ├── .env.example              # Secret template — copy to .env and fill in values
-├── mcp-enterprise.json       # Canonical 30-server manifest (env-var placeholders)
+├── mcp-enterprise.json       # Canonical 24-server manifest (env-var placeholders)
 ├── mcp_enterprise_compiler.py# AOT compiler — pre-installs deps, emits mcp-compiled.json
 └── README.md
 ```
@@ -34,7 +34,7 @@ CIPHER-MCP/
                      ├── mcp_enterprise_compiler.py  ──▶  .mcp_env/ (isolated binaries)
                      │                                ──▶  mcp-compiled.json
                      │
-                     └── MCP host  ──▶  mcp-compiled.json  ──▶  30 × MCP server processes
+                     └── MCP host  ──▶  mcp-compiled.json  ──▶  24 × MCP server processes
 ```
 
 ---
@@ -74,11 +74,10 @@ Key variables:
 
 | Variable | Description |
 |---|---|
-| `GITHUB_ENTERPRISE_TOKEN` | Fine-Grained PAT authorised for SAML SSO. Required scopes: `repo`, `read:org`, `read:enterprise`. |
+| `GITHUB_ENTERPRISE_TOKEN` | Fine-Grained PAT authorised for SAML SSO. Required scopes: `repo`, `read:org`, `read:enterprise`. Enterprise: `https://github.com/enterprises/nochef` |
 | `GITHUB_API_URL` | REST base URL. `https://api.github.com` for GHEC Cloud; override for GHES. |
-| `GITHUB_ORG_NAME` | Enterprise organisation slug. |
-| `SUPABASE_DB_URL` | Full Postgres connection string for Supabase. |
-| `REDIS_URL` | Redis connection URL for the redis-cache server. |
+| `GITHUB_ORG_NAME` | Enterprise organisation slug — `wolvesfield`. |
+| `SUPABASE_ACCESS_TOKEN` | Supabase Management API personal access token (`sbp_…`). Generate at https://supabase.com/dashboard/account/tokens |
 | `TAVILY_API_KEY` | Tavily Search API key. |
 | `MEM0_API_KEY` | Mem0 memory API key. |
 
@@ -132,13 +131,13 @@ this ecosystem:
 
 ```
 # SYSTEM DIRECTIVE: ENTERPRISE MCP ARCHITECT (GHEC-FIRST)
-You are an elite systems architect adding a new MCP server to a 30-node
+You are an elite systems architect adding a new MCP server to a 24-node
 Enterprise Service Mesh compiled with the CIPHER-MCP AOT framework.
 
 ## OPERATING CONTEXT
-* Ecosystem: 30 concurrent MCP servers (Blockchain, Docker, Supabase, Figma).
+* Ecosystem: 24 concurrent MCP servers (Blockchain, Docker, Supabase, Figma).
 * Execution: AOT compiled — DO NOT use `npx -y` or `uvx` at runtime.
-* Licensing: Strict GHEC/SSO compliance.
+* Licensing: Strict GHEC/SSO compliance (enterprise: nochef, org: wolvesfield).
 
 ## REQUIREMENTS FOR EVERY NEW SERVER
 
@@ -178,12 +177,12 @@ Enterprise Service Mesh compiled with the CIPHER-MCP AOT framework.
 | Brittleness Vector | Diagnostic Signature | Mitigation |
 |---|---|---|
 | **GHEC Token Expiration** | Tools return `401 Unauthorized` or SAML enforcement errors | Implement a pre-flight token check in the orchestrator. Intercept MCP errors and prompt re-authentication via GitHub SSO before routing to the LLM. |
-| **Context Window Saturation** | LLM ignores instructions or hallucinates tool arguments | 30 servers ≈ 150+ tools. Use **Semantic Tool Routing**: calculate embeddings for each query and inject only the 3–5 most relevant servers per turn. |
+| **Context Window Saturation** | LLM ignores instructions or hallucinates tool arguments | 24 servers ≈ 120+ tools. Use **Semantic Tool Routing**: calculate embeddings for each query and inject only the 3–5 most relevant servers per turn. |
 | **Orphaned Process Leaks** | Host memory spikes linearly; SQLite locks accumulate | Send `SIGTERM` to all child processes on shutdown, followed by `SIGKILL` after 3 000 ms. AOT binaries bypass standard wrappers so explicit cleanup is mandatory. |
 
 ---
 
-## The Complete 30-Server Payload
+## The Complete 24-Server Payload
 
 > All sensitive values in `mcp-enterprise.json` use `${VAR_NAME}` syntax.
 > They are substituted at runtime from your `.env` file.
@@ -199,27 +198,21 @@ Enterprise Service Mesh compiled with the CIPHER-MCP AOT framework.
 | 7 | `chrome-devtools` | Node/npx | Chrome DevTools Protocol |
 | 8 | `browser-devtools-generic` | Node/npx | Generic browser DevTools |
 | 9 | `tavily-search` | Node/npx | Web search (Tavily) |
-| 10 | `supabase-postgres` | Node/npx | Supabase Postgres queries |
+| 10 | `supabase-postgres` | Node/npx | Supabase Management API |
 | 11 | `desktop-commander` | Node/npx | Desktop automation |
 | 12 | `generic-openapi` | Node/npx | Generic OpenAPI proxy |
-| 13 | `google-places` | Node/npx | Google Maps / Places |
-| 14 | `evm-blockchain` | Node/npx | EVM chain interaction |
-| 15 | `tatum-blockchain` | Node/npx | Tatum multi-chain API |
-| 16 | `identitynow-sailpoint` | Node/npx | SailPoint IdentityNow IAM |
-| 17 | `garmin-connect` | Node/npx | Garmin fitness data |
-| 18 | `dbhub-io` | Node/npx | DBHub.io database hub |
-| 19 | `context7` | Node/node | Custom context management |
-| 20 | `serena` | Node/node | Custom orchestration agent |
-| 21 | `docker-executor` | Node/npx | Docker container management |
-| 22 | `slack-workspace` | Node/npx | Slack messaging |
-| 23 | `figma-remote` | SSE (remote) | Figma design data |
-| 24 | `mem0-memory` | Python/uvx | Persistent AI memory |
-| 25 | `python-secure-sandbox` | Python/uvx | Python code execution sandbox |
-| 26 | `cloudflare-infrastructure` | Node/npx | Cloudflare Workers/Pages/R2 |
-| 27 | `github-enterprise-cloud` | Node/npx | GHEC — enterprise-scoped GitHub |
-| 28 | `kubernetes-cluster` | Node/npx | Kubernetes cluster management |
-| 29 | `redis-cache` | Python/uvx | Redis cache operations |
-| 30 | `solana-blockchain` | Node/npx | Solana on-chain interactions |
+| 13 | `evm-blockchain` | Node/npx | EVM chain interaction |
+| 14 | `tatum-blockchain` | Node/npx | Tatum multi-chain API |
+| 15 | `dbhub-io` | Node/npx | DBHub.io database hub (https://dbhub.ai/) |
+| 16 | `context7` | Node/node | Custom context management |
+| 17 | `serena` | Node/node | Custom orchestration agent |
+| 18 | `docker-executor` | Node/npx | Docker container management |
+| 19 | `figma-remote` | SSE (remote) | Figma design data |
+| 20 | `mem0-memory` | Python/uvx | Persistent AI memory |
+| 21 | `python-secure-sandbox` | Python/uvx | Python code execution sandbox |
+| 22 | `github-enterprise-cloud` | Node/npx | GHEC — enterprise-scoped GitHub (org: wolvesfield) |
+| 23 | `kubernetes-cluster` | Node/npx | Kubernetes cluster management |
+| 24 | `solana-blockchain` | Node/npx | Solana on-chain interactions |
 
 ---
 

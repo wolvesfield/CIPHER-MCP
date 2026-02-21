@@ -44,7 +44,10 @@
     },
     "supabase-postgres": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-postgres", "${SUPABASE_DB_URL}"]
+      "args": ["-y", "@supabase/mcp-server-supabase"],
+      "env": {
+        "SUPABASE_ACCESS_TOKEN": "${SUPABASE_ACCESS_TOKEN}"
+      }
     },
     "desktop-commander": {
       "command": "npx",
@@ -54,13 +57,6 @@
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-openapi", "/path/to/generic-swagger-or-openapi.json"]
     },
-    "google-places": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-google-maps"],
-      "env": {
-        "GOOGLE_MAPS_API_KEY": "${GOOGLE_MAPS_API_KEY}"
-      }
-    },
     "evm-blockchain": {
       "command": "npx",
       "args": ["-y", "@mcpdotdirect/evm-mcp-server"]
@@ -69,28 +65,9 @@
       "command": "npx",
       "args": ["-y", "@tatumio/blockchain-mcp"]
     },
-    "identitynow-sailpoint": {
-      "command": "npx",
-      "args": ["-y", "mcp-sailpoint-identitynow"],
-      "env": {
-        "SAILPOINT_CLIENT_ID": "${SAILPOINT_CLIENT_ID}",
-        "SAILPOINT_CLIENT_SECRET": "${SAILPOINT_CLIENT_SECRET}"
-      }
-    },
-    "garmin-connect": {
-      "command": "npx",
-      "args": ["-y", "mcp-garmin-connect"],
-      "env": {
-        "GARMIN_USERNAME": "${GARMIN_USERNAME}",
-        "GARMIN_PASSWORD": "${GARMIN_PASSWORD}"
-      }
-    },
     "dbhub-io": {
       "command": "npx",
-      "args": ["-y", "mcp-dbhub"],
-      "env": {
-        "DBHUB_API_KEY": "${DBHUB_API_KEY}"
-      }
+      "args": ["-y", "mcp-dbhub"]
     },
     "context7": {
       "command": "node",
@@ -103,14 +80,6 @@
     "docker-executor": {
       "command": "npx",
       "args": ["-y", "@0xshariq/docker-mcp-server"]
-    },
-    "slack-workspace": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-slack"],
-      "env": {
-        "SLACK_BOT_TOKEN": "${SLACK_BOT_TOKEN}",
-        "SLACK_TEAM_ID": "${SLACK_TEAM_ID}"
-      }
     },
     "figma-remote": {
       "url": "https://mcp.figma.com/mcp"
@@ -126,13 +95,6 @@
       "command": "uvx",
       "args": ["mcp-server-python"]
     },
-    "cloudflare-infrastructure": {
-      "command": "npx",
-      "args": ["-y", "@cloudflare/mcp-server-cloudflare"],
-      "env": {
-        "CLOUDFLARE_API_TOKEN": "${CLOUDFLARE_API_TOKEN}"
-      }
-    },
     "github-enterprise-cloud": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-github"],
@@ -147,10 +109,6 @@
       "env": {
         "KUBECONFIG": "${KUBECONFIG}"
       }
-    },
-    "redis-cache": {
-      "command": "uvx",
-      "args": ["mcp-server-redis", "--url", "${REDIS_URL}"]
     },
     "solana-blockchain": {
       "command": "npx",
