@@ -1,0 +1,23 @@
+# Environment secrets — never commit real credentials
+.env
+
+# AOT-compiled binaries and virtual environments
+.mcp_env/
+
+# Compiled MCP output (contains resolved local paths)
+mcp-compiled.json
+
+# OS & editor artifacts
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Node artifacts
+node_modules/
+npm-debug.log*
