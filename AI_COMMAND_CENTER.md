@@ -2,6 +2,51 @@
 
 Use one script for RunPod + Civitai + S3 from VS Code terminal.
 
+---
+
+## 🎨 ComfyUI Generator — browser UI (no coding needed)
+
+A zero-dependency browser UI for WAN video/image generation, Civitai model search, and LoRA training config generation. No technical knowledge required.
+
+### Launch
+
+```powershell
+# Windows
+py -3 comfy_ui_generator.py
+```
+
+```bash
+# Linux / macOS
+python3 comfy_ui_generator.py
+```
+
+Then open **http://localhost:7860** in your browser.
+
+Optional — custom port:
+
+```bash
+python3 comfy_ui_generator.py --port 8080   # Linux/macOS
+py -3   comfy_ui_generator.py --port 8080   # Windows
+```
+
+Or set `COMFY_UI_PORT=7860` in your `.env` file.
+
+### What you get
+
+| Tab | What it does |
+|---|---|
+| 🎬 Text → Video | Type your idea, pick Fast / Quality / Best, get a WAN payload |
+| 🖼️ Image → Video | Animate a still image with a motion description |
+| ✨ Restyle | Change the style of an image with a strength slider |
+| 🔍 Enhance | Upscale and sharpen any image (×2 or ×4) |
+| 🔎 Civitai | Search Civitai for LoRA and Checkpoint models |
+| 🎓 Train LoRA | Fill a simple form → get a kohya_ss training command + Civitai upload guide |
+| 📦 Models | Reference list of all supported WAN / FLUX / SDXL models |
+
+Every tab shows a copy-able JSON payload. If `WAN_GENERATOR_URL` is set in `.env`, payloads can be sent directly to your backend.
+
+---
+
 ## 1) Put keys in local `.env` (not committed)
 
 Add these keys to `.env`:
