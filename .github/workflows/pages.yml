@@ -1,10 +1,11 @@
-name: Deploy ComfyUI Generator to GitHub Pages
+name: Deploy CIPHER Image-to-Video Studio to GitHub Pages
 
 on:
   push:
     branches:
       - main
       - copilot/create-comfy-ui-generator
+      - copilot/add-image-upload-video-workflow
   workflow_dispatch:
 
 permissions:

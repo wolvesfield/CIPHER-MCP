@@ -274,19 +274,109 @@
     margin-bottom: 16px;
   }
   .civitai-notice a { color: var(--accent2); }
+
+  /* ── Image upload zone ───────────────────────────────────────────────────── */
+  .upload-zone {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 40px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color .2s, background .2s;
+    margin-top: 6px;
+    user-select: none;
+    position: relative;
+  }
+  .upload-zone:hover, .upload-zone.dragover {
+    border-color: var(--accent);
+    background: rgba(124,106,247,.07);
+  }
+  .upload-zone.has-image {
+    padding: 16px 24px;
+    border-style: solid;
+    border-color: var(--success);
+  }
+  .upload-zone .uz-icon { font-size: 2.4rem; line-height: 1; }
+  .upload-zone .uz-text { color: var(--muted); font-size: 0.9rem; margin-top: 8px; }
+  .upload-zone .uz-hint { color: var(--muted); font-size: 0.78rem; margin-top: 4px; opacity: .7; }
+  .upload-preview {
+    display: none;
+    width: 100%;
+    max-height: 280px;
+    border-radius: var(--radius);
+    object-fit: contain;
+    margin-top: 10px;
+    background: var(--card);
+    border: 1.5px solid var(--border);
+  }
+  .upload-preview.visible { display: block; }
+  .upload-meta {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .upload-meta.visible { display: flex; }
+  .upload-meta .fname {
+    color: var(--accent2);
+    font-size: 0.85rem;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .upload-meta .clear-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 0.8rem;
+    padding: 3px 10px;
+    transition: all .15s;
+    flex-shrink: 0;
+  }
+  .upload-meta .clear-btn:hover { border-color: #f44; color: #f44; }
+
+  /* ── Motion style grid ───────────────────────────────────────────────────── */
+  .motion-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+    gap: 8px;
+    margin: 10px 0 16px;
+  }
+  .motion-btn {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 9px 10px;
+    text-align: center;
+    transition: all .15s;
+    line-height: 1.4;
+  }
+  .motion-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+  .motion-btn.selected {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(124,106,247,.12);
+  }
 </style>
 </head>
 <body>
 
 <header>
   <div class="status-dot"></div>
-  <h1>🎨 CIPHER ComfyUI Generator</h1>
-  <span>WAN · FLUX · SDXL · Civitai · LoRA</span>
+  <h1>🎨 CIPHER Image-to-Video Studio</h1>
+  <span>Upload · Animate · Create — WAN · FLUX · SDXL · Civitai · LoRA</span>
 </header>
 
 <nav id="nav">
-  <button class="active" onclick="showTab('t2v', this)">🎬 Text → Video</button>
-  <button onclick="showTab('i2v', this)">🖼️ Image → Video</button>
+  <button class="active" onclick="showTab('i2v', this)">🖼️ Image → Video</button>
+  <button onclick="showTab('t2v', this)">🎬 Text → Video</button>
   <button onclick="showTab('i2i', this)">✨ Restyle</button>
   <button onclick="showTab('enhance', this)">🔍 Enhance</button>
   <button onclick="showTab('civitai', this)">🔎 Civitai</button>
@@ -297,7 +387,7 @@
 <main>
 
 <!-- ===== Text → Video ===== -->
-<div class="tab active" id="tab-t2v">
+<div class="tab" id="tab-t2v">
   <h2>🎬 Text → Video</h2>
   <p class="subtitle">Describe your video idea and pick a quality preset. Copy the payload into your ComfyUI / WAN backend.</p>
 
@@ -323,27 +413,56 @@
 </div>
 
 <!-- ===== Image → Video ===== -->
-<div class="tab" id="tab-i2v">
+<div class="tab active" id="tab-i2v">
   <h2>🖼️ Image → Video</h2>
-  <p class="subtitle">Animate a still image. Enter the image file path and describe the motion you want.</p>
+  <p class="subtitle">Upload a photo and pick a motion style — Midjourney-style. The payload embeds your image as base64 for your WAN / ComfyUI backend.</p>
 
-  <label for="i2v-path">Image path or URL</label>
-  <input type="text" id="i2v-path" placeholder="./my-image.png  or  https://example.com/image.jpg">
+  <label>Upload image <span style="color:var(--muted);font-weight:400">(drag &amp; drop or click to browse)</span></label>
+  <div class="upload-zone" id="i2v-zone">
+    <input type="file" id="i2v-file" accept="image/*" style="display:none">
+    <div class="uz-icon">🖼️</div>
+    <div class="uz-text">Drop your image here or <strong style="color:var(--accent)">click to browse</strong></div>
+    <div class="uz-hint">PNG · JPG · WEBP · GIF — any resolution</div>
+  </div>
+  <img id="i2v-preview" class="upload-preview" alt="Uploaded image preview">
+  <div id="i2v-meta" class="upload-meta">
+    <span id="i2v-fname" class="fname"></span>
+    <button class="clear-btn" onclick="clearI2VImage()">✕ Remove</button>
+  </div>
 
   <label for="i2v-prompt">Motion / camera description</label>
   <textarea id="i2v-prompt" placeholder="e.g. slow zoom out revealing the full scene, golden hour light, gentle wind in hair"></textarea>
 
+  <label>Motion style <span style="color:var(--muted);font-weight:400">(tap to fill prompt)</span></label>
+  <div class="motion-grid" id="i2v-motions">
+    <button class="motion-btn" onclick="pickMotion('Slow gentle zoom in, steady handheld feel',this)">🔍 Zoom In</button>
+    <button class="motion-btn" onclick="pickMotion('Slow cinematic zoom out revealing the full scene',this)">🔭 Zoom Out</button>
+    <button class="motion-btn" onclick="pickMotion('Smooth pan left following the horizon',this)">⬅️ Pan Left</button>
+    <button class="motion-btn" onclick="pickMotion('Smooth pan right following the subject',this)">➡️ Pan Right</button>
+    <button class="motion-btn" onclick="pickMotion('Slow cinematic tilt up, sky reveal, golden hour',this)">⬆️ Tilt Up</button>
+    <button class="motion-btn" onclick="pickMotion('Dramatic dolly zoom vertigo effect, subject stays sharp',this)">🎥 Dolly</button>
+    <button class="motion-btn" onclick="pickMotion('Slow 360° orbital rotation around subject, cinematic',this)">🔄 Orbit</button>
+    <button class="motion-btn" onclick="pickMotion('Floating upward drift with gentle sway, dreamy feel',this)">☁️ Float</button>
+    <button class="motion-btn" onclick="pickMotion('Freeze frame with subtle ambient motion, leaves rustling, water rippling',this)">🌊 Ambient</button>
+    <button class="motion-btn" onclick="pickMotion('Hyper-lapse rush forward through the scene, fast motion blur',this)">💨 Rush</button>
+    <button class="motion-btn" onclick="pickMotion('Gentle camera shake, handheld documentary style',this)">📷 Handheld</button>
+    <button class="motion-btn" onclick="pickMotion('Slow push in toward subject, soft bokeh depth of field',this)">🎬 Push In</button>
+  </div>
+
   <label>Quality preset</label>
   <div class="preset-row">
-    <button class="preset-btn" onclick="setPreset('i2v','fast',this)">⚡ Fast</button>
-    <button class="preset-btn selected" onclick="setPreset('i2v','quality',this)">✨ Quality</button>
-    <button class="preset-btn" onclick="setPreset('i2v','best',this)">🏆 Best</button>
+    <button class="preset-btn" onclick="setPreset('i2v','fast',this)">⚡ Fast<br><small style="color:var(--muted);font-weight:400">832×480 · 81f · ~5s</small></button>
+    <button class="preset-btn selected" onclick="setPreset('i2v','quality',this)">✨ Quality<br><small style="color:var(--muted);font-weight:400">1280×720 · 121f · ~5s</small></button>
+    <button class="preset-btn" onclick="setPreset('i2v','best',this)">🏆 Best<br><small style="color:var(--muted);font-weight:400">1536×864 · 161f · ~7s</small></button>
   </div>
 
   <button class="btn" onclick="runI2V()">🎬 Build Payload</button>
   <div class="error-msg" id="i2v-err"></div>
   <div class="result-box" id="i2v-result">
-    <div class="result-header">PAYLOAD <button class="copy-btn" onclick="copyResult('i2v-pre')">📋 Copy</button></div>
+    <div class="result-header">
+      PAYLOAD — paste into ComfyUI / WAN backend
+      <button class="copy-btn" onclick="copyResult('i2v-pre')">📋 Copy</button>
+    </div>
     <pre id="i2v-pre"></pre>
   </div>
 </div>
@@ -522,6 +641,9 @@ const state = {
   i2v: { mode: "quality" },
   enhance: { scale: "4" },
 };
+
+// Holds the base64 data URL of the uploaded i2v image
+let i2vImageData = null;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // WAN payload generators (ported from comfy_ui_generator.py)
@@ -731,7 +853,8 @@ function hideErr(prefix) {
 }
 
 function copyResult(preId) {
-  const text = document.getElementById(preId).textContent;
+  const el = document.getElementById(preId);
+  const text = el.dataset.fullJson || el.textContent;
   navigator.clipboard.writeText(text).then(() => {
     const btn = document.querySelector(`[onclick="copyResult('${preId}')"]`);
     if (btn) { btn.textContent = "✅ Copied!"; setTimeout(() => { btn.textContent = "📋 Copy"; }, 2000); }
@@ -762,11 +885,24 @@ function runT2V() {
 }
 
 function runI2V() {
-  const path = document.getElementById("i2v-path").value.trim();
   const idea = document.getElementById("i2v-prompt").value.trim();
-  if (!path) { showErr("i2v", "Please enter the image path or URL."); return; }
+  if (!i2vImageData) { showErr("i2v", "Please upload an image first."); return; }
   if (!idea) { showErr("i2v", "Please describe the motion / camera."); return; }
-  showResult("i2v", wanI2V(path, idea, state.i2v.mode));
+  const payload = wanI2V(i2vImageData, idea, state.i2v.mode);
+  const fullJson = JSON.stringify(payload, null, 2);
+  // Truncate base64 in display to keep the UI readable; copy button gives full data
+  const MIN_B64_LEN = 80, DISPLAY_B64_LEN = 60;
+  const displayJson = fullJson.replace(
+    new RegExp(`"(data:image\\/[^"]{${MIN_B64_LEN},})"`, "g"),
+    (_, b64) => `"${b64.slice(0, DISPLAY_B64_LEN)}…[base64 truncated — use Copy for full payload]"`
+  );
+  const pre = document.getElementById("i2v-pre");
+  const box = document.getElementById("i2v-result");
+  pre.textContent = displayJson;
+  pre.dataset.fullJson = fullJson;
+  box.classList.add("visible");
+  hideErr("i2v");
+  box.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
 function runI2I() {
@@ -829,6 +965,83 @@ function runLora() {
   showResult("lora", loraConfig(dataset, output, base, res, steps, lr, dim));
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Image upload helpers (Image → Video tab)
+// ─────────────────────────────────────────────────────────────────────────────
+function handleI2VFile(file) {
+  if (!file || !file.type.startsWith("image/")) {
+    showErr("i2v", "Please select a valid image file (PNG, JPG, WEBP…).");
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    i2vImageData = e.target.result;
+    const preview = document.getElementById("i2v-preview");
+    const meta    = document.getElementById("i2v-meta");
+    const fname   = document.getElementById("i2v-fname");
+    const zone    = document.getElementById("i2v-zone");
+    preview.src = i2vImageData;
+    preview.classList.add("visible");
+    fname.textContent = "📎 " + file.name;
+    meta.classList.add("visible");
+    zone.classList.add("has-image");
+    zone.querySelector(".uz-icon").textContent = "✅";
+    zone.querySelector(".uz-text").innerHTML =
+      '<strong style="color:var(--success)">Image ready</strong> — click to replace';
+    zone.querySelector(".uz-hint").style.display = "none";
+    hideErr("i2v");
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearI2VImage() {
+  i2vImageData = null;
+  const preview = document.getElementById("i2v-preview");
+  const meta    = document.getElementById("i2v-meta");
+  const zone    = document.getElementById("i2v-zone");
+  const input   = document.getElementById("i2v-file");
+  preview.src = "";
+  preview.classList.remove("visible");
+  meta.classList.remove("visible");
+  zone.classList.remove("has-image");
+  zone.querySelector(".uz-icon").textContent = "🖼️";
+  zone.querySelector(".uz-text").innerHTML =
+    'Drop your image here or <strong style="color:var(--accent)">click to browse</strong>';
+  zone.querySelector(".uz-hint").style.display = "";
+  input.value = "";
+}
+
+function pickMotion(text, btn) {
+  document.getElementById("i2v-prompt").value = text;
+  document.querySelectorAll("#i2v-motions .motion-btn").forEach(b => b.classList.remove("selected"));
+  btn.classList.add("selected");
+}
+
+function setupI2VDrop() {
+  const zone  = document.getElementById("i2v-zone");
+  const input = document.getElementById("i2v-file");
+
+  zone.addEventListener("click", () => input.click());
+
+  zone.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    zone.classList.add("dragover");
+  });
+  zone.addEventListener("dragleave", (e) => {
+    if (!e.relatedTarget || !zone.contains(e.relatedTarget)) zone.classList.remove("dragover");
+  });
+  zone.addEventListener("drop", (e) => {
+    e.preventDefault();
+    zone.classList.remove("dragover");
+    const file = e.dataTransfer.files[0];
+    if (file) handleI2VFile(file);
+  });
+
+  input.addEventListener("change", (e) => {
+    if (e.target.files[0]) handleI2VFile(e.target.files[0]);
+  });
+}
+
 function renderModels() {
   const c = document.getElementById("models-cards");
   if (c.children.length) return; // already rendered
@@ -847,6 +1060,7 @@ function renderModels() {
 
 // Auto-render models tab on load
 renderModels();
+setupI2VDrop();
 </script>
 </body>
 </html>
