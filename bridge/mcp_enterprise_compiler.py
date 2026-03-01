@@ -315,12 +315,12 @@ def main() -> None:
         description="AOT compiler for the CIPHER-MCP MCP server ecosystem."
     )
     parser.add_argument(
-        "--input", default="mcp-enterprise.json",
-        help="Source manifest (default: mcp-enterprise.json)"
+        "--input", default=str(REPO_ROOT / "mcp-enterprise.json"),
+        help="Source manifest (default: bridge/mcp-enterprise.json)"
     )
     parser.add_argument(
-        "--output", default="mcp-compiled.json",
-        help="Compiled output (default: mcp-compiled.json)"
+        "--output", default=str(REPO_ROOT / "mcp-compiled.json"),
+        help="Compiled output (default: bridge/mcp-compiled.json)"
     )
     parser.add_argument(
         "--validate-env", action="store_true",

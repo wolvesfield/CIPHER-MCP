@@ -78,7 +78,7 @@ if [ ! -f ".env" ]; then
     cp .env.example .env
 fi
 
-python3 mcp_enterprise_compiler.py
+python3 bridge/mcp_enterprise_compiler.py
 
 echo -e "\033[1;35m✨ SUCCESS: Your Universal AI Master Repo is fully active.\033[0m"
 echo -e "\033[1;32m   - 13 Agents Linked\033[0m"

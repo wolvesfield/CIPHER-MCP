@@ -4,10 +4,10 @@ doctor:
 	python scripts_doctor.py
 
 validate:
-	python mcp_enterprise_compiler.py --validate-env
+	python bridge/mcp_enterprise_compiler.py --validate-env
 
 compile:
-	python mcp_enterprise_compiler.py
+	python bridge/mcp_enterprise_compiler.py
 
 compile-fast:
-	python mcp_enterprise_compiler.py --skip-install
+	python bridge/mcp_enterprise_compiler.py --skip-install

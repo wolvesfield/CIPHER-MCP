@@ -83,7 +83,7 @@ if (-not (Test-Path ".env")) {
     Copy-Item ".env.example" ".env"
 }
 
-python mcp_enterprise_compiler.py
+python bridge/mcp_enterprise_compiler.py
 
 Write-Host "✨ SUCCESS: Your Universal AI Master Repo is fully active." -ForegroundColor Cyan
 Write-Host "   - 13 Agents Linked"
