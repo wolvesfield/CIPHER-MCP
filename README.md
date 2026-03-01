@@ -41,6 +41,15 @@ This repo does **not** contain ComfyUI, Midjourney, LoRA training, or any image/
 
 ## Quick Start
 
+### Step 0 — Run a full repo health check
+
+```bash
+python scripts_doctor.py
+```
+
+This verifies the manifest schema and catches common config mistakes before
+you spend time installing dependencies.
+
 ### Step 1 — Install prerequisites
 
 ```bash
@@ -102,6 +111,15 @@ Verify no runtime launchers remain:
 
 ```bash
 grep -c '"npx"\|"uvx"' mcp-compiled.json   # should print 0
+```
+
+If you prefer make targets:
+
+```bash
+make doctor        # manifest sanity check
+make validate      # strict .env validation
+make compile       # full AOT compile + installs
+make compile-fast  # rewrite only, skips installs
 ```
 
 ### Step 5 — Wire up your MCP host
