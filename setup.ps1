@@ -6,7 +6,7 @@ Universal Master Bootstrap Script for Windows
 One-command deployment for CIPHER-MCP:
 1. Links 13 Agents, 9 Skills, Instructions.
 2. Creates workspace directories.
-3. Compiles the 24-server MCP ecosystem.
+3. Compiles the MCP ecosystem and role-based routing configs.
 #>
 
 $ErrorActionPreference = 'Stop'
@@ -76,7 +76,7 @@ foreach ($Prompt in $Prompts) {
 }
 
 # 7. Compile MCP Ecosystem
-Write-Host "🛠️ Compiling 24-Server MCP Ecosystem (AOT Mode)..." -ForegroundColor Yellow
+Write-Host "🛠️ Compiling MCP Ecosystem (AOT Mode)..." -ForegroundColor Yellow
 cd "$RepoRoot"
 if (-not (Test-Path ".env")) {
     Write-Host "Creating .env from template..."
@@ -88,6 +88,8 @@ python mcp_enterprise_compiler.py
 Write-Host "✨ SUCCESS: Your Universal AI Master Repo is fully active." -ForegroundColor Cyan
 Write-Host "   - 13 Agents Linked"
 Write-Host "   - 9 Skills Linked"
-Write-Host "   - 24 MCP Servers Compiled to mcp-compiled.json"
+Write-Host "   - 28 MCP Servers Compiled to mcp-compiled.json"
+Write-Host "   - Default onboarding profile generated: mcp-master.json"
+Write-Host "   - Wing profiles generated: mcp-core/dev/hacker/trading.json"
 Write-Host "   - Workspace: $AgentOutputDir ready."
-Write-Host "NOTE: Point your IDE/Host to $RepoRoot\mcp-compiled.json to use your tools." -ForegroundColor Yellow
+Write-Host "NOTE: Point your IDE/Host to $RepoRoot\mcp-master.json for selective tool activation." -ForegroundColor Yellow

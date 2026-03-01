@@ -132,7 +132,7 @@ If memory tools unavailable: announce `⚠️ NO-MEMORY MODE` and reason visibly
 ## MCP TOOL ROUTING PROTOCOL (DYNAMIC AUTONOMY)
 
 Fleet is the Master Orchestrator and must arm its team with the correct tools.
-Never load all 24 tools at once. When dispatching a sub-agent, Fleet MUST explicitly instruct the agent to connect to its designated MCP package to ensure high autonomy without token bloat:
+Never load all tools at once. When dispatching a sub-agent, Fleet MUST explicitly instruct the agent to connect to its designated MCP package to ensure high autonomy without token bloat:
 
 **1. CORE PACKAGE (`mcp-core.json`) — The Brain & File System**
 - *Tools:* filesystem, github, tavily-search, mem0-memory, google-ai-studio, sqlite-audit-db

@@ -1,0 +1,32 @@
+{
+  "mcpServers": {
+    "docker-executor": {
+      "command": "/workspace/CIPHER-MCP/.mcp_env/node/node_modules/.bin/docker-mcp-server",
+      "args": []
+    },
+    "kubernetes-cluster": {
+      "command": "/workspace/CIPHER-MCP/.mcp_env/node/node_modules/.bin/kubernetes-mcp-server",
+      "args": [],
+      "env": {
+        "KUBECONFIG": "${KUBECONFIG}"
+      }
+    },
+    "google-cloud": {
+      "command": "/workspace/CIPHER-MCP/.mcp_env/node/node_modules/.bin/server-gcp",
+      "args": [],
+      "env": {
+        "GOOGLE_APPLICATION_CREDENTIALS": "${GOOGLE_CLOUD_CREDS_PATH}"
+      }
+    },
+    "python-secure-sandbox": {
+      "command": "/workspace/CIPHER-MCP/.mcp_env/python/bin/mcp-python",
+      "args": []
+    },
+    "generic-openapi": {
+      "command": "/workspace/CIPHER-MCP/.mcp_env/node/node_modules/.bin/mcp-openapi-schema-explorer",
+      "args": [
+        "/path/to/generic-swagger-or-openapi.json"
+      ]
+    }
+  }
+}

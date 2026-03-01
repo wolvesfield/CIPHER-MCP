@@ -1,7 +1,7 @@
 """
 mcp_enterprise_compiler.py
 ==========================
-Ahead-Of-Time (AOT) compiler for the CIPHER-MCP 24-server ecosystem.
+Ahead-Of-Time (AOT) compiler for the CIPHER-MCP MCP server ecosystem.
 
 What it does
 ------------
@@ -9,7 +9,7 @@ What it does
 2. Downloads all npx / uvx dependencies into an isolated .mcp_env/ directory
    so that servers start in <150 ms without touching npm/PyPI at runtime.
 3. Rewrites every server entry to use the local binary path instead of npx/uvx.
-4. Writes the ready-to-use config to mcp-compiled.json.
+4. Writes the ready-to-use config to mcp-compiled.json and wing-scoped configs.
 
 Usage
 -----
@@ -33,6 +33,7 @@ from pathlib import Path
 # ---------------------------------------------------------------------------
 # Paths
 # ---------------------------------------------------------------------------
+REPO_ROOT = Path(__file__).resolve().parent
 ENV_DIR = Path(".mcp_env").resolve()
 NODE_DIR = ENV_DIR / "node"
 PY_DIR = ENV_DIR / "python"
@@ -301,7 +302,7 @@ def validate_env_strict(input_path: Path) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="AOT compiler for the CIPHER-MCP 24-server ecosystem."
+        description="AOT compiler for the CIPHER-MCP MCP server ecosystem."
     )
     parser.add_argument(
         "--input", default="mcp-enterprise.json",
@@ -377,6 +378,7 @@ def main() -> None:
     # Write split configurations
     # ------------------------------------------------------------------ #
     packages = {
+        "mcp-master.json": ["filesystem", "github", "tavily-search", "mem0-memory", "google-ai-studio", "sqlite-audit-db"],
         "mcp-core.json": ["filesystem", "github", "tavily-search", "mem0-memory", "google-ai-studio", "sqlite-audit-db"],
         "mcp-dev.json": ["docker-executor", "kubernetes-cluster", "google-cloud", "python-secure-sandbox", "generic-openapi"],
         "mcp-trading.json": ["evm-blockchain", "solana-blockchain", "tatum-blockchain", "supabase-postgres", "dbhub-io"],
@@ -396,7 +398,7 @@ def main() -> None:
     print(
         f"\n[+] Compiled {len(servers)} servers → {output_path}\n"
         "    Boot latency target: <150 ms per server.\n"
-        "    Point your MCP host at mcp-compiled.json to launch the ecosystem."
+        "    Default selective profile: mcp-master.json (load wing profiles on demand)."
     )
 
 
