@@ -22,6 +22,5 @@ __pycache__/
 node_modules/
 npm-debug.log*
 
-# Local AI command-center artifacts
-outputs/
+# Database files
 *.db
