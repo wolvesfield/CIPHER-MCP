@@ -1,12 +1,45 @@
 # CIPHER-MCP
 
-Enterprise Model Context Protocol (MCP) Deployment Framework — 24-server matrix with GHEC (GitHub Enterprise Cloud) integration, zero-trust secrets management, and Ahead-Of-Time (AOT) compilation for sub-150 ms boot latency.
+MCP server mesh, agent skills, and operational instructions for the **Cipher Ops** autonomous agent infrastructure — Super Agents, Master Agents, and specialized task agents running 24/7.
+
+*Built in memory of Ayesha Afser "Littli".*
 
 ---
 
-## Quick Start (Post-Merge)
+## What This Repo Is
 
-Follow these five steps after cloning to go from zero to a live 24-server mesh inside VS Code / Cursor / Claude Desktop.
+This is the single source of truth for:
+
+- **MCP Server Mesh** — 24-server enterprise manifest with AOT compilation for sub-150 ms boot
+- **Agent Skills & Instructions** — prompts, behaviors, and operational configs for every agent tier
+- **Infrastructure Configs** — secrets templates, compilation tooling, and deployment guides
+
+This repo does **not** contain ComfyUI, Midjourney, LoRA training, or any image/video generation tooling. Those live in their own repos.
+
+---
+
+## Agent Hierarchy
+
+```
+┌─────────────────────────────────────────────┐
+│              SUPER AGENTS                    │
+│  (Orchestrators — route tasks, manage state) │
+├─────────────────────────────────────────────┤
+│              MASTER AGENTS                   │
+│  (Wing leads — Trading, Hacker, Ops)         │
+├─────────────────────────────────────────────┤
+│           SPECIALIZED AGENTS                 │
+│  (24 MCP servers — each a focused tool)      │
+└─────────────────────────────────────────────┘
+```
+
+- **Super Agents** — top-level orchestrators that receive commands (WhatsApp/Telegram/voice via OpenClaw), decide which wing handles the task, and coordinate cross-wing operations.
+- **Master Agents** — wing leaders (Trading Wing, Hacker Wing, Infrastructure Wing) that decompose tasks and dispatch to specialized agents.
+- **Specialized Agents** — the 24 MCP servers below. Each is a focused tool: blockchain, database, browser automation, code execution, memory, etc.
+
+---
+
+## Quick Start
 
 ### Step 1 — Install prerequisites
 
@@ -27,7 +60,7 @@ pip install python-dotenv
 cp .env.example .env
 ```
 
-Open `.env` and fill in every `REPLACE_ME` value. Key entries:
+Open `.env` and fill in every `REPLACE_ME` value:
 
 | Variable | Where to get it |
 |---|---|
@@ -41,7 +74,7 @@ Open `.env` and fill in every `REPLACE_ME` value. Key entries:
 ### Step 3 — Validate your environment
 
 ```bash
-py -3 mcp_enterprise_compiler.py --validate-env
+python mcp_enterprise_compiler.py --validate-env
 ```
 
 Expected output when all variables are set:
@@ -50,49 +83,30 @@ Expected output when all variables are set:
 [+] validate-env PASSED -- all 24 server env vars are set and non-placeholder.
 ```
 
-Fix any reported `NOT SET` or `still a placeholder` lines before continuing.
-
 ### Step 4 — AOT compile the mesh
 
 ```bash
-py -3 mcp_enterprise_compiler.py
+python mcp_enterprise_compiler.py
 ```
 
 This pre-installs every `npx`/`uvx` package into `.mcp_env/` and writes
-`mcp-compiled.json` with absolute binary paths. Typical output:
+`mcp-compiled.json` with absolute binary paths.
 
-```
-[1/3] Bootstrapping isolated environments ...
-[2/3] Installing 16 Node package(s) ...
-[2/3] Installing 5 Python package(s) ...
-[+] Compiled 24 servers -> mcp-compiled.json
-    Boot latency target: <150 ms per server.
-    Point your MCP host at mcp-compiled.json to launch the ecosystem.
+For faster rebuilds after deps are already installed:
+
+```bash
+python mcp_enterprise_compiler.py --skip-install
 ```
 
-Verify no `npx` or `uvx` strings remain in the compiled output:
+Verify no runtime launchers remain:
 
 ```bash
 grep -c '"npx"\|"uvx"' mcp-compiled.json   # should print 0
 ```
 
-PowerShell equivalent:
-
-```powershell
-Select-String -Path .\mcp-compiled.json -Pattern '"command"\s*:\s*"(npx|uvx)"'
-```
-
-For faster regeneration after dependencies are already installed:
-
-```bash
-py -3 mcp_enterprise_compiler.py --skip-install
-```
-
 ### Step 5 — Wire up your MCP host
 
-#### VS Code / GitHub Copilot Chat
-
-Add to your VS Code `settings.json` (or `.vscode/mcp.json`):
+**VS Code / GitHub Copilot Chat** — add to `settings.json` or `.vscode/mcp.json`:
 
 ```json
 {
@@ -102,88 +116,20 @@ Add to your VS Code `settings.json` (or `.vscode/mcp.json`):
 }
 ```
 
-Or use the **MCP: Add Server** command and point it at the absolute path of
-`mcp-compiled.json`.
+**Cursor** — Settings → MCP → paste contents of `mcp-compiled.json`.
 
-Reload the window, then type `#` in Copilot Chat — you should see tools from
-all 24 servers, e.g. `#supabase-mcp`, `#solana-blockchain`.
-
-#### Cursor
-
-Open **Settings → MCP** and paste the contents of `mcp-compiled.json` into the
-servers list, or set the config file path to the absolute path of
-`mcp-compiled.json`.
-
-#### Claude Desktop
-
-In `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS)
-or `%APPDATA%\Claude\claude_desktop_config.json` (Windows), merge the
-`mcpServers` block from `mcp-compiled.json` into the existing config.
+**Claude Desktop** — merge `mcpServers` from `mcp-compiled.json` into `claude_desktop_config.json`.
 
 ---
 
-## Verify GHEC (wolvesfield org) access
-
-Once the mesh is running, ask your agent:
-
-> "List all repositories in the wolvesfield organization."
-
-The `github-enterprise-cloud` server will call the GitHub API with your
-`GITHUB_ENTERPRISE_TOKEN` and return the org's repository list.  A `401` or
-SAML error means the token has not been authorised for the **nochef** enterprise
-SSO — visit https://github.com/settings/tokens, find the PAT, and click
-**Authorise** next to the nochef organisation.
-
----
-
-## Daily Use Checklist
-
-- Open VS Code in this repo and run `Ctrl+Shift+B` (default task: Validate & Compile).
-- Confirm the task exits cleanly with `validate-env PASSED` and `Compiled 24 servers`.
-- If you changed package pins in `mcp-enterprise.json`, run full rebuild once:
-  - `py -3 mcp_enterprise_compiler.py`
-- If you changed only env values or paths, run fast rebuild:
-  - `py -3 mcp_enterprise_compiler.py --skip-install`
-- Test MCP quickly in Copilot Chat:
-  - `List all repositories in the wolvesfield organization.`
-- If tools do not appear immediately, run `Developer: Reload Window` in VS Code.
-
----
-
-## Table of Contents
-
-- [CIPHER-MCP](#cipher-mcp)
-  - [Quick Start (Post-Merge)](#quick-start-post-merge)
-    - [Step 1 — Install prerequisites](#step-1--install-prerequisites)
-    - [Step 2 — Configure your secrets](#step-2--configure-your-secrets)
-    - [Step 3 — Validate your environment](#step-3--validate-your-environment)
-    - [Step 4 — AOT compile the mesh](#step-4--aot-compile-the-mesh)
-    - [Step 5 — Wire up your MCP host](#step-5--wire-up-your-mcp-host)
-      - [VS Code / GitHub Copilot Chat](#vs-code--github-copilot-chat)
-      - [Cursor](#cursor)
-      - [Claude Desktop](#claude-desktop)
-  - [Verify GHEC (wolvesfield org) access](#verify-ghec-wolvesfield-org-access)
-  - [Daily Use Checklist](#daily-use-checklist)
-  - [Table of Contents](#table-of-contents)
-  - [Architecture Overview](#architecture-overview)
-  - [Prerequisites](#prerequisites)
-  - [Phase 1 — GHEC Authentication \& Secrets Matrix](#phase-1--ghec-authentication--secrets-matrix)
-  - [Phase 2 — AOT Compilation (eliminating npx/uvx latency)](#phase-2--aot-compilation-eliminating-npxuvx-latency)
-    - [`--validate-env` pre-flight check](#--validate-env-pre-flight-check)
-  - [Phase 3 — Master Agent Copilot Prompt](#phase-3--master-agent-copilot-prompt)
-  - [Phase 4 — Deployment Telemetry \& Failure Analysis](#phase-4--deployment-telemetry--failure-analysis)
-  - [The Complete 24-Server Payload](#the-complete-24-server-payload)
-  - [License](#license)
-
----
-
-## Architecture Overview
+## Architecture
 
 ```
 CIPHER-MCP/
-├── .env.example              # Secret template — copy to .env and fill in values
-├── mcp-enterprise.json       # Canonical 24-server manifest (env-var placeholders)
-├── mcp_enterprise_compiler.py# AOT compiler — pre-installs deps, emits mcp-compiled.json
+├── .env.example               # Secret template — copy to .env and fill in
+├── mcp-enterprise.json        # Canonical 24-server manifest (env-var placeholders)
+├── mcp_enterprise_compiler.py # AOT compiler — pre-installs deps, emits mcp-compiled.json
+├── littli-protocol.md         # Mission context for AI companion sessions
 └── README.md
 ```
 
@@ -200,111 +146,29 @@ CIPHER-MCP/
 
 ---
 
-## Prerequisites
+## Secrets & Security
 
-| Tool | Minimum version | Notes |
-|------|-----------------|-------|
-| Python | 3.10 | Required to run the AOT compiler |
-| Node.js | 18 LTS | Required for Node-based MCP servers |
-| npm | 9 | Bundled with Node 18+ |
-| uv / uvx | latest | Required for Python-based MCP servers |
-| Git | any | |
+All credentials are stored **outside** the repository in a `.env` file. Source control only sees `${VAR_NAME}` placeholders.
 
-Optional (recommended):
-
-```bash
-pip install python-dotenv   # Enables .env auto-loading inside the compiler
-```
+> `.env` is in `.gitignore` and will never be committed. Rotate all GHEC tokens via GitHub's Fine-Grained PAT console and re-run `--validate-env` after rotation.
 
 ---
 
-## Phase 1 — GHEC Authentication & Secrets Matrix
+## AOT Compilation Details
 
-All credentials are stored **outside** the repository in a `.env` file loaded
-by the host orchestrator at startup.  Source control only ever sees
-`${VAR_NAME}` placeholders.
+The AOT compiler eliminates the 10–45 s cold-start penalty of `npx -y` / `uvx`:
 
-```bash
-# Copy the template
-cp .env.example .env
-
-# Edit .env — fill in each REPLACE_ME value
-```
-
-Key variables:
-
-| Variable | Description |
-|---|---|
-| `GITHUB_ENTERPRISE_TOKEN` | Fine-Grained PAT authorised for SAML SSO. Required scopes: `repo`, `read:org`, `read:enterprise`. Enterprise: `https://github.com/enterprises/nochef` |
-| `GITHUB_API_URL` | REST base URL. `https://api.github.com` for GHEC Cloud; override for GHES. |
-| `GITHUB_ORG_NAME` | Enterprise organisation slug — `wolvesfield`. |
-| `SUPABASE_ACCESS_TOKEN` | Supabase Management API personal access token (`sbp_…`). Generate at https://supabase.com/dashboard/account/tokens |
-| `TAVILY_API_KEY` | Tavily Search API key. |
-| `MEM0_API_KEY` | Mem0 memory API key. |
-
-See `.env.example` for the complete list.
-
-> **Security note:** `.env` is listed in `.gitignore` and will never be
-> committed.  Rotate all GHEC tokens via GitHub's Fine-Grained PAT management
-> console and re-run pre-flight checks after rotation.
+1. `bootstrap_environments()` — creates `.mcp_env/node/` and `.mcp_env/python/` if needed.
+2. `collect_dependencies()` — parses every `npx -y` / `uvx` entry, rewrites to local binary paths.
+3. `install_node_packages()` / `install_python_packages()` — bulk-installs into isolated envs.
+4. `validate_env_vars()` — warns about any missing `${VAR}` references.
+5. Emits `mcp-compiled.json` — point your MCP host here.
 
 ---
 
-## Phase 2 — AOT Compilation (eliminating npx/uvx latency)
+## Master Agent System Prompt
 
-The AOT compiler pre-installs every dependency into an isolated `.mcp_env/`
-directory and rewrites the manifest to use direct binary paths, eliminating
-the 10–45 s cold-start penalty of `npx -y` / `uvx`.
-
-```bash
-# One-time compilation (re-run whenever mcp-enterprise.json changes)
-python mcp_enterprise_compiler.py
-
-# Custom paths
-python mcp_enterprise_compiler.py --input mcp-enterprise.json --output mcp-compiled.json
-
-# Pre-flight env check — verify every ${VAR} is set and not still REPLACE_ME
-python mcp_enterprise_compiler.py --validate-env
-```
-
-What happens:
-
-1. `bootstrap_environments()` — creates `.mcp_env/node/` (npm) and
-   `.mcp_env/python/` (venv) if they do not exist.
-2. `collect_dependencies()` — parses every `npx -y` / `uvx` entry, collects
-   package names, rewrites server commands to local binary paths, and replaces
-   any literal secret values with `${VAR_NAME}` placeholders.
-3. `install_node_packages()` / `install_python_packages()` — bulk-installs
-   all collected packages into the isolated environments.
-4. `validate_env_vars()` — warns about any `${VAR}` references not present in
-   the environment so missing secrets are caught before deployment.
-5. Emits `mcp-compiled.json` — point your MCP host at this file.
-
-### `--validate-env` pre-flight check
-
-Run this after filling in `.env` and **before** launching the server mesh:
-
-```
-$ python mcp_enterprise_compiler.py --validate-env
-[+] validate-env PASSED -- all 24 server env vars are set and non-placeholder.
-```
-
-If any variable is missing or still contains a `REPLACE_ME` value the command
-exits with code `1` and lists every offending variable by server name so you
-can fix them individually.
-
-> `.mcp_env/` and `mcp-compiled.json` are listed in `.gitignore` because they
-> contain absolute local paths and compiled binaries.
-
----
-
-## Phase 3 — Master Agent Copilot Prompt
-
-Use the following system prompt when asking your AI coding assistant (Cursor /
-Claude / Copilot) to generate **new** MCP servers that integrate cleanly into
-this ecosystem:
-
----
+Use this when asking an AI assistant to generate **new** MCP servers for the mesh:
 
 ```
 # SYSTEM DIRECTIVE: ENTERPRISE MCP ARCHITECT (GHEC-FIRST)
@@ -326,12 +190,9 @@ Enterprise Service Mesh compiled with the CIPHER-MCP AOT framework.
 ### Performance & Reliability
 * Language: TypeScript (Node.js) or Python.
 * Transport: stdio.
-* DB connections: Singleton connection pool — one pool, not one connection per
-  tool call.
-* High-latency tasks (Blockchain RPC, Docker exec): async/await with 15 s
-  timeout to prevent orchestrator deadlock.
-* Tool descriptions: highly condensed Zod/Pydantic schemas — the orchestrator
-  is already managing 30 servers.
+* DB connections: Singleton connection pool.
+* High-latency tasks: async/await with 15 s timeout.
+* Tool descriptions: highly condensed Zod/Pydantic schemas.
 
 ### Required Files
 1. `src/index.*`   — stdio transport init, error handling, GHEC env validation.
@@ -349,20 +210,19 @@ Enterprise Service Mesh compiled with the CIPHER-MCP AOT framework.
 
 ---
 
-## Phase 4 — Deployment Telemetry & Failure Analysis
+## Deployment Telemetry & Failure Analysis
 
 | Brittleness Vector | Diagnostic Signature | Mitigation |
 |---|---|---|
-| **GHEC Token Expiration** | Tools return `401 Unauthorized` or SAML enforcement errors | Implement a pre-flight token check in the orchestrator. Intercept MCP errors and prompt re-authentication via GitHub SSO before routing to the LLM. |
-| **Context Window Saturation** | LLM ignores instructions or hallucinates tool arguments | 24 servers ≈ 120+ tools. Use **Semantic Tool Routing**: calculate embeddings for each query and inject only the 3–5 most relevant servers per turn. |
-| **Orphaned Process Leaks** | Host memory spikes linearly; SQLite locks accumulate | Send `SIGTERM` to all child processes on shutdown, followed by `SIGKILL` after 3 000 ms. AOT binaries bypass standard wrappers so explicit cleanup is mandatory. |
+| **GHEC Token Expiration** | `401 Unauthorized` or SAML errors | Pre-flight token check. Re-authenticate via GitHub SSO before routing to the LLM. |
+| **Context Window Saturation** | LLM ignores instructions or hallucinates tool args | 24 servers ≈ 120+ tools. Use **Semantic Tool Routing**: inject only the 3–5 most relevant servers per turn. |
+| **Orphaned Process Leaks** | Host memory spikes; SQLite locks | `SIGTERM` all children on shutdown, `SIGKILL` after 3 s. |
 
 ---
 
-## The Complete 24-Server Payload
+## The 24-Server Mesh
 
-> All sensitive values in `mcp-enterprise.json` use `${VAR_NAME}` syntax.
-> They are substituted at runtime from your `.env` file.
+> All sensitive values in `mcp-enterprise.json` use `${VAR_NAME}` syntax, substituted at runtime from `.env`.
 
 | # | Server Key | Stack | Purpose |
 |---|---|---|---|
@@ -380,7 +240,7 @@ Enterprise Service Mesh compiled with the CIPHER-MCP AOT framework.
 | 12 | `generic-openapi` | Node/npx | Generic OpenAPI proxy |
 | 13 | `evm-blockchain` | Node/npx | EVM chain interaction |
 | 14 | `tatum-blockchain` | Node/npx | Tatum multi-chain API |
-| 15 | `dbhub-io` | Node/npx | DBHub.io database hub (https://dbhub.ai/) |
+| 15 | `dbhub-io` | Node/npx | DBHub.io database hub |
 | 16 | `context7` | Node/node | Custom context management |
 | 17 | `serena` | Node/node | Custom orchestration agent |
 | 18 | `docker-executor` | Node/npx | Docker container management |
@@ -390,6 +250,15 @@ Enterprise Service Mesh compiled with the CIPHER-MCP AOT framework.
 | 22 | `github-enterprise-cloud` | Node/npx | GHEC — enterprise-scoped GitHub (org: wolvesfield) |
 | 23 | `kubernetes-cluster` | Node/npx | Kubernetes cluster management |
 | 24 | `solana-blockchain` | Node/npx | Solana on-chain interactions |
+
+---
+
+## Daily Use Checklist
+
+1. Run `python mcp_enterprise_compiler.py --validate-env` — confirm `PASSED`.
+2. If packages changed in `mcp-enterprise.json`, run full compile: `python mcp_enterprise_compiler.py`
+3. If only env values changed, fast rebuild: `python mcp_enterprise_compiler.py --skip-install`
+4. Test in Copilot Chat: *"List all repositories in the wolvesfield organization."*
 
 ---
 
