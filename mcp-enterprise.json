@@ -110,6 +110,34 @@
         "KUBECONFIG": "${KUBECONFIG}"
       }
     },
+    "google-cloud": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-gcp@0.1.0"],
+      "env": {
+        "GOOGLE_APPLICATION_CREDENTIALS": "${GOOGLE_CLOUD_CREDS_PATH}"
+      }
+    },
+    "google-ai-studio": {
+      "command": "npx",
+      "args": ["-y", "mcp-server-google-generative-ai@0.1.1"],
+      "env": {
+        "GOOGLE_AI_STUDIO_API_KEY": "${GOOGLE_AI_STUDIO_API_KEY}"
+      }
+    },
+    "hostinger-api": {
+      "command": "npx",
+      "args": ["-y", "mcp-api-bridge@1.0.0", "https://api.hostinger.com/v1"],
+      "env": {
+        "HOSTINGER_API_TOKEN": "${HOSTINGER_API_TOKEN}"
+      }
+    },
+    "antigravity-browser": {
+      "command": "npx",
+      "args": ["-y", "antigravity-mcp-bridge@0.5.0"],
+      "env": {
+        "ANTIGRAVITY_PORT": "9222"
+      }
+    },
     "solana-blockchain": {
       "command": "npx",
       "args": ["-y", "solana-mcp@1.0.1"],

@@ -374,6 +374,21 @@ def main() -> None:
         )
 
     # ------------------------------------------------------------------ #
+    # Write split configurations
+    # ------------------------------------------------------------------ #
+    packages = {
+        "mcp-core.json": ["filesystem", "github", "tavily-search", "mem0-memory", "google-ai-studio", "sqlite-audit-db"],
+        "mcp-dev.json": ["docker-executor", "kubernetes-cluster", "google-cloud", "python-secure-sandbox", "generic-openapi"],
+        "mcp-trading.json": ["evm-blockchain", "solana-blockchain", "tatum-blockchain", "supabase-postgres", "dbhub-io"],
+        "mcp-hacker.json": ["playwright", "puppeteer", "chrome-devtools", "hostinger-api", "antigravity-browser", "fetch"]
+    }
+
+    for filename, server_list in packages.items():
+        sub_config = {"mcpServers": {k: servers[k] for k in server_list if k in servers}}
+        with (REPO_ROOT / filename).open("w") as fh:
+            json.dump(sub_config, fh, indent=2)
+        print(f"    -> Generated {filename} ({len(sub_config['mcpServers'])} servers)")
+
     config["mcpServers"] = servers
     with output_path.open("w") as fh:
         json.dump(config, fh, indent=2)
