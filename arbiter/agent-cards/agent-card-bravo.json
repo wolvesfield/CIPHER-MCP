@@ -1,0 +1,812 @@
+{
+  "name": "General Bravo \u2014 GPT-4.1",
+  "description": "Cloud-based GPT General for structured reasoning, code generation, and systematic analysis. Excels at trading algorithms, exploit development, and CI/CD pipeline design.",
+  "version": "1.0.0",
+  "provider": {
+    "organization": "Cipher Ops \u2014 Legacy Foundation",
+    "url": "https://github.com/wolvesfield/CIPHER-MCP"
+  },
+  "supportedInterfaces": [
+    {
+      "url": "https://api.openai.com/v1",
+      "protocolBinding": "HTTP+JSON",
+      "protocolVersion": "1.0"
+    }
+  ],
+  "capabilities": {
+    "streaming": true,
+    "pushNotifications": true,
+    "extendedAgentCard": false
+  },
+  "securitySchemes": {
+    "bearerAuth": {
+      "httpAuthSecurityScheme": {
+        "description": "Bearer token for OpenAI API",
+        "scheme": "Bearer"
+      }
+    }
+  },
+  "securityRequirements": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "defaultInputModes": [
+    "application/json",
+    "text/plain"
+  ],
+  "defaultOutputModes": [
+    "application/json",
+    "text/plain"
+  ],
+  "skills": [
+    {
+      "id": "mcp-playwright",
+      "name": "Playwright (HACKING)",
+      "description": "[MCP\u2192A2A] Browser automation via Playwright for web scraping, recon, and interaction testing",
+      "tags": [
+        "browser",
+        "automation",
+        "scraping",
+        "recon",
+        "web",
+        "hacking",
+        "mcp-wrapped"
+      ],
+      "examples": [
+        "Scrape target site for exposed endpoints",
+        "Automate login flow testing"
+      ],
+      "inputModes": [
+        "application/json",
+        "text/plain"
+      ],
+      "outputModes": [
+        "application/json",
+        "text/plain"
+      ]
+    },
+    {
+      "id": "mcp-puppeteer",
+      "name": "Puppeteer (HACKING)",
+      "description": "[MCP\u2192A2A] Headless Chrome automation for stealth browsing, screenshot capture, and DOM manipulation",
+      "tags": [
+        "browser",
+        "headless",
+        "chrome",
+        "stealth",
+        "screenshots",
+        "hacking",
+        "mcp-wrapped"
+      ],
+      "examples": [
+        "Take screenshots of target infrastructure",
+        "Extract DOM data from JS-rendered pages"
+      ],
+      "inputModes": [
+        "application/json",
+        "text/plain"
+      ],
+      "outputModes": [
+        "application/json",
+        "text/plain"
+      ]
+    },
+    {
+      "id": "mcp-chrome-devtools",
+      "name": "Chrome Devtools (HACKING)",
+      "description": "[MCP\u2192A2A] Chrome DevTools protocol for network analysis, performance profiling, and request interception",
+      "tags": [
+        "devtools",
+        "network",
+        "profiling",
+        "interception",
+        "hacking",
+        "mcp-wrapped"
+      ],
+      "examples": [
+        "Monitor network requests for API key leakage",
+        "Profile page load for injection vectors"
+      ],
+      "inputModes": [
+        "application/json",
+        "text/plain"
+      ],
+      "outputModes": [
+        "application/json",
+        "text/plain"
+      ]
+    },
+    {
+      "id": "mcp-browser-devtools-generic",
+      "name": "Browser Devtools Generic (HACKING)",
+      "description": "[MCP\u2192A2A] Generic browser DevTools for cross-browser debugging and security analysis",
+      "tags": [
+        "devtools",
+        "debugging",
+        "cross-browser",
+        "security",
+        "hacking",
+        "mcp-wrapped"
+      ],
+      "examples": [
+        "Debug cross-browser rendering issues",
+        "Inspect WebSocket traffic"
+      ],
+      "inputModes": [
+        "application/json",
+        "text/plain"
+      ],
+      "outputModes": [
+        "application/json",
+        "text/plain"
+      ]
+    },
+    {
+      "id": "mcp-antigravity-browser",
+      "name": "Antigravity Browser (HACKING)",
+      "description": "[MCP\u2192A2A] Anti-detection browser bridge for OSINT operations requiring fingerprint evasion",
+      "tags": [
+        "anti-detect",
+        "osint",
+        "fingerprint",
+        "evasion",
+        "stealth",
+        "hacking",
+        "mcp-wrapped"
+      ],
+      "examples": [
+        "Browse target sites without triggering bot detection",
+        "OSINT research with clean fingerprint"
+      ],
+      "inputModes": [
+        "application/json",
+        "text/plain"
+      ],
+      "outputModes": [
+        "application/json",
+        "text/plain"
+      ]
+    },
+    {
+      "id": "mcp-fetch",
+      "name": "Fetch (HACKING)",
+      "description": "[MCP\u2192A2A] HTTP fetch for raw URL content retrieval, API probing, and response analysis",
+      "tags": [
+        "http",
+        "fetch",
+        "api",
+        "probing",
+        "response",
+        "hacking",
+        "mcp-wrapped"
+      ],
+      "examples": [
+        "Probe API endpoints for open directories",
+        "Fetch and analyze HTTP headers"
+      ],
+      "inputModes": [
+        "application/json",
+        "text/plain"
+      ],
+      "outputModes": [
+        "application/json",
+        "text/plain"
+      ]
+    },
+    {
+      "id": "mcp-hostinger-api",
+      "name": "Hostinger Api (HACKING)",
+      "description": "[MCP\u2192A2A] Hostinger VPS/hosting management API for infrastructure control and DNS operations",
+      "tags": [
+        "hosting",
+        "vps",
+        "dns",
+        "infrastructure",
+        "hostinger",
+        "hacking",
+        "mcp-wrapped"
+      ],
+      "examples": [
+        "Check DNS records for subdomain enumeration",
+        "Manage VPS firewall rules"
+      ],
+      "inputModes": [
+        "application/json",
+        "text/plain"
+      ],
+      "outputModes": [
+        "application/json",
+        "text/plain"
+      ]
+    },
+    {
+      "id": "mcp-evm-blockchain",
+      "name": "Evm Blockchain (TRADING)",
+      "description": "[MCP\u2192A2A] EVM-compatible blockchain operations for Ethereum, BSC, Polygon \u2014 wallet queries, contract interaction, token analysis",
+      "tags": [
+        "ethereum",
+        "evm",
+        "blockchain",
+        "defi",
+        "contracts",
+        "tokens",
+        "trading",
+        "mcp-wrapped"
+      ],
+      "examples": [
+        "Check wallet balance on Ethereum mainnet",
+        "Analyze smart contract ABI for rug pull indicators"
+      ],
+      "inputModes": [
+        "application/json",
+        "text/plain"
+      ],
+      "outputModes": [
+        "application/json",
+        "text/plain"
+      ]
+    },
+    {
+      "id": "mcp-solana-blockchain",
+      "name": "Solana Blockchain (TRADING)",
+      "description": "[MCP\u2192A2A] Solana blockchain operations for SPL tokens, program interaction, and on-chain analysis",
+      "tags": [
+        "solana",
+        "spl",
+        "blockchain",
+        "defi",
+        "programs",
+        "trading",
+        "mcp-wrapped"
+      ],
+      "examples": [
+        "Monitor Solana wallet for large token transfers",
+        "Analyze Raydium LP positions"
+      ],
+      "inputModes": [
+        "application/json",
+        "text/plain"
+      ],
+      "outputModes": [
+        "application/json",
+        "text/plain"
+      ]
+    },
+    {
+      "id": "mcp-tatum-blockchain",
+      "name": "Tatum Blockchain (TRADING)",
+      "description": "[MCP\u2192A2A] Multi-chain blockchain API via Tatum \u2014 supports 40+ chains for unified trading intel",
+      "tags": [
+        "multi-chain",
+        "tatum",
+        "blockchain",
+        "trading",
+        "api",
+        "trading",
+        "mcp-wrapped"
+      ],
+      "examples": [
+        "Get BTC transaction history",
+        "Monitor whale movements across chains"
+      ],
+      "inputModes": [
+        "application/json",
+        "text/plain"
+      ],
+      "outputModes": [
+        "application/json",
+        "text/plain"
+      ]
+    },
+    {
+      "id": "mcp-supabase-postgres",
+      "name": "Supabase Postgres (TRADING)",
+      "description": "[MCP\u2192A2A] Supabase PostgreSQL for trade logging, signal storage, portfolio tracking, and backtesting data",
+      "tags": [
+        "database",
+        "postgres",
+        "supabase",
+        "logging",
+        "trades",
+        "trading",
+        "mcp-wrapped"
+      ],
+      "examples": [
+        "Log trade execution with entry/exit prices",
+        "Query historical signals for backtesting"
+      ],
+      "inputModes": [
+        "application/json",
+        "text/plain"
+      ],
+      "outputModes": [
+        "application/json",
+        "text/plain"
+      ]
+    },
+    {
+      "id": "mcp-dbhub-io",
+      "name": "Dbhub Io (TRADING)",
+      "description": "[MCP\u2192A2A] Database hub for shared datasets, market data caching, and collaborative analysis",
+      "tags": [
+        "database",
+        "datasets",
+        "caching",
+        "collaborative",
+        "trading",
+        "mcp-wrapped"
+      ],
+      "examples": [
+        "Cache daily OHLCV data for analysis",
+        "Share curated dataset with agents"
+      ],
+      "inputModes": [
+        "application/json",
+        "text/plain"
+      ],
+      "outputModes": [
+        "application/json",
+        "text/plain"
+      ]
+    },
+    {
+      "id": "mcp-docker-executor",
+      "name": "Docker Executor (DEV)",
+      "description": "[MCP\u2192A2A] Docker container management for sandboxed code execution, service deployment, and testing",
+      "tags": [
+        "docker",
+        "containers",
+        "deployment",
+        "sandbox",
+        "testing",
+        "dev",
+        "mcp-wrapped"
+      ],
+      "examples": [
+        "Deploy new service container",
+        "Execute untrusted code in sandbox"
+      ],
+      "inputModes": [
+        "application/json",
+        "text/plain"
+      ],
+      "outputModes": [
+        "application/json",
+        "text/plain"
+      ]
+    },
+    {
+      "id": "mcp-kubernetes-cluster",
+      "name": "Kubernetes Cluster (DEV)",
+      "description": "[MCP\u2192A2A] Kubernetes cluster management for pod orchestration, scaling, and service mesh operations",
+      "tags": [
+        "kubernetes",
+        "k8s",
+        "orchestration",
+        "pods",
+        "scaling",
+        "dev",
+        "mcp-wrapped"
+      ],
+      "examples": [
+        "Scale trading bot replicas",
+        "Check pod health status"
+      ],
+      "inputModes": [
+        "application/json",
+        "text/plain"
+      ],
+      "outputModes": [
+        "application/json",
+        "text/plain"
+      ]
+    },
+    {
+      "id": "mcp-google-cloud",
+      "name": "Google Cloud (DEV)",
+      "description": "[MCP\u2192A2A] Google Cloud Platform management for compute, storage, and AI/ML service operations",
+      "tags": [
+        "gcp",
+        "cloud",
+        "compute",
+        "storage",
+        "ml",
+        "dev",
+        "mcp-wrapped"
+      ],
+      "examples": [
+        "Provision new compute instance",
+        "Deploy model to Vertex AI"
+      ],
+      "inputModes": [
+        "application/json",
+        "text/plain"
+      ],
+      "outputModes": [
+        "application/json",
+        "text/plain"
+      ]
+    },
+    {
+      "id": "mcp-python-secure-sandbox",
+      "name": "Python Secure Sandbox (DEV)",
+      "description": "[MCP\u2192A2A] Secure Python sandbox for safe code execution, data analysis, and script testing",
+      "tags": [
+        "python",
+        "sandbox",
+        "execution",
+        "analysis",
+        "safe",
+        "dev",
+        "mcp-wrapped"
+      ],
+      "examples": [
+        "Run backtesting script in sandbox",
+        "Execute data analysis pipeline"
+      ],
+      "inputModes": [
+        "application/json",
+        "text/plain"
+      ],
+      "outputModes": [
+        "application/json",
+        "text/plain"
+      ]
+    },
+    {
+      "id": "mcp-generic-openapi",
+      "name": "Generic Openapi (DEV)",
+      "description": "[MCP\u2192A2A] OpenAPI schema explorer for REST API discovery, documentation, and integration testing",
+      "tags": [
+        "openapi",
+        "api",
+        "documentation",
+        "rest",
+        "integration",
+        "dev",
+        "mcp-wrapped"
+      ],
+      "examples": [
+        "Explore exchange API endpoints",
+        "Generate API client from spec"
+      ],
+      "inputModes": [
+        "application/json",
+        "text/plain"
+      ],
+      "outputModes": [
+        "application/json",
+        "text/plain"
+      ]
+    },
+    {
+      "id": "mcp-filesystem",
+      "name": "Filesystem (CORE)",
+      "description": "[MCP\u2192A2A] Local filesystem operations for file management, log analysis, and configuration handling",
+      "tags": [
+        "filesystem",
+        "files",
+        "logs",
+        "config",
+        "management",
+        "core",
+        "mcp-wrapped"
+      ],
+      "examples": [
+        "Read trade log files",
+        "Update configuration files"
+      ],
+      "inputModes": [
+        "application/json",
+        "text/plain"
+      ],
+      "outputModes": [
+        "application/json",
+        "text/plain"
+      ]
+    },
+    {
+      "id": "mcp-github",
+      "name": "Github (CORE)",
+      "description": "[MCP\u2192A2A] GitHub API for repo management, PR creation, code search, issue tracking, and CI/CD integration",
+      "tags": [
+        "github",
+        "git",
+        "repos",
+        "pr",
+        "cicd",
+        "code",
+        "core",
+        "mcp-wrapped"
+      ],
+      "examples": [
+        "Create PR with strategy changes",
+        "Search code for security patterns"
+      ],
+      "inputModes": [
+        "application/json",
+        "text/plain"
+      ],
+      "outputModes": [
+        "application/json",
+        "text/plain"
+      ]
+    },
+    {
+      "id": "mcp-tavily-search",
+      "name": "Tavily Search (CORE)",
+      "description": "[MCP\u2192A2A] AI-powered web search via Tavily for real-time market news, threat intel, and research",
+      "tags": [
+        "search",
+        "web",
+        "news",
+        "research",
+        "intel",
+        "core",
+        "mcp-wrapped"
+      ],
+      "examples": [
+        "Search latest crypto regulations",
+        "Find CVE disclosures for target software"
+      ],
+      "inputModes": [
+        "application/json",
+        "text/plain"
+      ],
+      "outputModes": [
+        "application/json",
+        "text/plain"
+      ]
+    },
+    {
+      "id": "mcp-mem0-memory",
+      "name": "Mem0 Memory (CORE)",
+      "description": "[MCP\u2192A2A] Persistent agent memory via Mem0 for cross-session knowledge, preferences, and learned patterns",
+      "tags": [
+        "memory",
+        "persistence",
+        "knowledge",
+        "learning",
+        "context",
+        "core",
+        "mcp-wrapped"
+      ],
+      "examples": [
+        "Remember successful trading patterns",
+        "Store OSINT findings for later"
+      ],
+      "inputModes": [
+        "application/json",
+        "text/plain"
+      ],
+      "outputModes": [
+        "application/json",
+        "text/plain"
+      ]
+    },
+    {
+      "id": "mcp-google-ai-studio",
+      "name": "Google Ai Studio (CORE)",
+      "description": "[MCP\u2192A2A] Google AI Studio for Gemini model access, multimodal analysis, and generative tasks",
+      "tags": [
+        "gemini",
+        "ai",
+        "multimodal",
+        "generation",
+        "analysis",
+        "core",
+        "mcp-wrapped"
+      ],
+      "examples": [
+        "Analyze chart screenshot with Gemini vision",
+        "Generate market report"
+      ],
+      "inputModes": [
+        "application/json",
+        "text/plain"
+      ],
+      "outputModes": [
+        "application/json",
+        "text/plain"
+      ]
+    },
+    {
+      "id": "mcp-sqlite-audit-db",
+      "name": "Sqlite Audit Db (CORE)",
+      "description": "[MCP\u2192A2A] SQLite audit database for operation logging, compliance tracking, and decision audit trails",
+      "tags": [
+        "audit",
+        "sqlite",
+        "logging",
+        "compliance",
+        "trail",
+        "core",
+        "mcp-wrapped"
+      ],
+      "examples": [
+        "Log all trade decisions with reasoning",
+        "Query audit trail for compliance review"
+      ],
+      "inputModes": [
+        "application/json",
+        "text/plain"
+      ],
+      "outputModes": [
+        "application/json",
+        "text/plain"
+      ]
+    },
+    {
+      "id": "mcp-figma-remote",
+      "name": "Figma Remote (DEV)",
+      "description": "[MCP\u2192A2A] Figma design integration for UI mockup access, design-to-code, and asset extraction",
+      "tags": [
+        "figma",
+        "design",
+        "ui",
+        "mockup",
+        "assets",
+        "dev",
+        "mcp-wrapped"
+      ],
+      "examples": [
+        "Extract dashboard design specs",
+        "Convert Figma component to HTML"
+      ],
+      "inputModes": [
+        "application/json",
+        "text/plain"
+      ],
+      "outputModes": [
+        "application/json",
+        "text/plain"
+      ]
+    },
+    {
+      "id": "mcp-desktop-commander",
+      "name": "Desktop Commander (CORE)",
+      "description": "[MCP\u2192A2A] Desktop automation for OS-level operations, application control, and system management",
+      "tags": [
+        "desktop",
+        "automation",
+        "os",
+        "system",
+        "control",
+        "core",
+        "mcp-wrapped"
+      ],
+      "examples": [
+        "Launch MetaTrader terminal",
+        "Automate screenshot capture workflow"
+      ],
+      "inputModes": [
+        "application/json",
+        "text/plain"
+      ],
+      "outputModes": [
+        "application/json",
+        "text/plain"
+      ]
+    },
+    {
+      "id": "mcp-context7",
+      "name": "Context7 (CORE)",
+      "description": "[MCP\u2192A2A] Custom context server for project-specific knowledge injection and documentation access",
+      "tags": [
+        "context",
+        "knowledge",
+        "documentation",
+        "custom",
+        "injection",
+        "core",
+        "mcp-wrapped"
+      ],
+      "examples": [
+        "Load project architecture docs",
+        "Inject trading strategy playbook"
+      ],
+      "inputModes": [
+        "application/json",
+        "text/plain"
+      ],
+      "outputModes": [
+        "application/json",
+        "text/plain"
+      ]
+    },
+    {
+      "id": "mcp-serena",
+      "name": "Serena (CORE)",
+      "description": "[MCP\u2192A2A] Custom Serena server for specialized operations and agent coordination",
+      "tags": [
+        "serena",
+        "custom",
+        "coordination",
+        "specialized",
+        "core",
+        "mcp-wrapped"
+      ],
+      "examples": [
+        "Coordinate multi-agent task execution",
+        "Run specialized analysis pipeline"
+      ],
+      "inputModes": [
+        "application/json",
+        "text/plain"
+      ],
+      "outputModes": [
+        "application/json",
+        "text/plain"
+      ]
+    },
+    {
+      "id": "mcp-github-enterprise-cloud",
+      "name": "Github Enterprise Cloud (DEV)",
+      "description": "[MCP\u2192A2A] GitHub Enterprise Cloud for organization-level repo management, team operations, and enterprise CI/CD",
+      "tags": [
+        "github",
+        "enterprise",
+        "organization",
+        "teams",
+        "cicd",
+        "dev",
+        "mcp-wrapped"
+      ],
+      "examples": [
+        "Manage org-level repository settings",
+        "Trigger enterprise CI/CD pipeline"
+      ],
+      "inputModes": [
+        "application/json",
+        "text/plain"
+      ],
+      "outputModes": [
+        "application/json",
+        "text/plain"
+      ]
+    },
+    {
+      "id": "consensus-vote",
+      "name": "Consensus Vote",
+      "description": "Submit a confidence-scored vote for the Consensus Arbiter",
+      "tags": [
+        "consensus",
+        "voting",
+        "arbiter",
+        "confidence"
+      ],
+      "examples": [
+        "Submit BUY signal with 0.87 confidence",
+        "Vote on vulnerability severity"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "full-spectrum-analysis",
+      "name": "Full-Spectrum Analysis",
+      "description": "Execute trading + hacking + dev analysis using GPT-4.1",
+      "tags": [
+        "full-spectrum",
+        "analysis",
+        "multi-domain"
+      ],
+      "examples": [
+        "Analyze BTC trade + check exchange security + review bot code"
+      ],
+      "inputModes": [
+        "application/json",
+        "text/plain"
+      ],
+      "outputModes": [
+        "application/json",
+        "text/plain"
+      ]
+    }
+  ]
+}

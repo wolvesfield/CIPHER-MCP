@@ -151,6 +151,8 @@ CIPHER-MCP/
 ├── .env.example               # Secret template — copy to .env and fill in
 ├── bridge/mcp-enterprise.json        # Canonical 28-server manifest (env-var placeholders)
 ├── bridge/mcp_enterprise_compiler.py # AOT compiler — pre-installs deps, emits mcp-compiled.json
+├── mcp-enterprise.json        # Canonical 28-server manifest (env-var placeholders)
+├── mcp_enterprise_compiler.py # AOT compiler — pre-installs deps, emits mcp-compiled.json
 ├── littli-protocol.md         # Mission context for AI companion sessions
 └── README.md
 ```
@@ -185,6 +187,7 @@ The AOT compiler eliminates the 10–45 s cold-start penalty of `npx -y` / `uvx`
 3. `install_node_packages()` / `install_python_packages()` — bulk-installs into isolated envs.
 4. `validate_env_vars()` — warns about any missing `${VAR}` references.
 5. Emits `mcp-compiled.json` + `mcp-master.json` + wing packages (`mcp-core/dev/hacker/trading.json`). These are local build artifacts and are gitignored.
+5. Emits `mcp-compiled.json` + `mcp-master.json` + wing packages (`mcp-core/dev/hacker/trading.json`).
 
 ---
 

@@ -1,0 +1,151 @@
+{
+  "name": "Cipher Ops Consensus Arbiter",
+  "description": "Async event-driven consensus arbiter for the Team of Rivals M1-Parallel architecture. Dispatches SwarmTasks to 3 Generals, collects confidence-scored votes, and runs 4 consensus strategies.",
+  "version": "1.0.0",
+  "provider": {
+    "organization": "Cipher Ops \u2014 Legacy Foundation",
+    "url": "https://github.com/wolvesfield/CIPHER-MCP"
+  },
+  "supportedInterfaces": [
+    {
+      "url": "http://localhost:8000",
+      "protocolBinding": "HTTP+JSON",
+      "protocolVersion": "1.0"
+    }
+  ],
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": true,
+    "extendedAgentCard": false
+  },
+  "defaultInputModes": [
+    "application/json",
+    "text/plain"
+  ],
+  "defaultOutputModes": [
+    "application/json"
+  ],
+  "skills": [
+    {
+      "id": "task-dispatch",
+      "name": "SwarmTask Dispatch",
+      "description": "Broadcast a task to all 3 Generals in parallel with Minimum Intel Window enforcement",
+      "tags": [
+        "dispatch",
+        "broadcast",
+        "parallel",
+        "task"
+      ],
+      "examples": [
+        "Submit BTC trading signal for consensus",
+        "Request security audit across all Generals"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "consensus-early-termination",
+      "name": "Early Termination Consensus",
+      "description": "First General above confidence threshold wins \u2014 for time-critical trades",
+      "tags": [
+        "consensus",
+        "fast",
+        "trading",
+        "early-termination"
+      ],
+      "examples": [
+        "Fast BTC scalp decision"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "consensus-confidence-weighted",
+      "name": "Confidence-Weighted Voting",
+      "description": "Highest confidence General wins \u2014 default strategy for balanced decisions",
+      "tags": [
+        "consensus",
+        "voting",
+        "weighted",
+        "default"
+      ],
+      "examples": [
+        "Evaluate portfolio rebalance proposal"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "consensus-full-synthesis",
+      "name": "Full Synthesis",
+      "description": "Merge all General responses into a combined analysis \u2014 for research tasks",
+      "tags": [
+        "consensus",
+        "synthesis",
+        "merge",
+        "research"
+      ],
+      "examples": [
+        "Comprehensive market analysis combining all perspectives"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "consensus-red-team-override",
+      "name": "Red Team Override",
+      "description": "Any General flagging CRITICAL risk overrides the majority \u2014 safety-first for high-stakes ops",
+      "tags": [
+        "consensus",
+        "red-team",
+        "safety",
+        "override",
+        "risk"
+      ],
+      "examples": [
+        "Evaluate smart contract for rug pull before investing"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    },
+    {
+      "id": "general-health",
+      "name": "General Health Check",
+      "description": "Check availability and response times of all 3 Generals",
+      "tags": [
+        "health",
+        "monitoring",
+        "status"
+      ],
+      "examples": [
+        "Are all Generals online?"
+      ],
+      "inputModes": [
+        "application/json"
+      ],
+      "outputModes": [
+        "application/json"
+      ]
+    }
+  ]
+}

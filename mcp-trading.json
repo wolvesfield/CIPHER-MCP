@@ -1,0 +1,30 @@
+{
+  "mcpServers": {
+    "evm-blockchain": {
+      "command": "/workspace/CIPHER-MCP/.mcp_env/node/node_modules/.bin/evm-mcp-server",
+      "args": []
+    },
+    "solana-blockchain": {
+      "command": "/workspace/CIPHER-MCP/.mcp_env/node/node_modules/.bin/solana-mcp",
+      "args": [],
+      "env": {
+        "SOLANA_RPC_URL": "${SOLANA_RPC_URL}"
+      }
+    },
+    "tatum-blockchain": {
+      "command": "/workspace/CIPHER-MCP/.mcp_env/node/node_modules/.bin/blockchain-mcp",
+      "args": []
+    },
+    "supabase-postgres": {
+      "command": "/workspace/CIPHER-MCP/.mcp_env/node/node_modules/.bin/mcp-server-supabase",
+      "args": [],
+      "env": {
+        "SUPABASE_ACCESS_TOKEN": "${SUPABASE_ACCESS_TOKEN}"
+      }
+    },
+    "dbhub-io": {
+      "command": "/workspace/CIPHER-MCP/.mcp_env/node/node_modules/.bin/dbhub",
+      "args": []
+    }
+  }
+}
