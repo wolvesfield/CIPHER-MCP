@@ -6,6 +6,11 @@
 
 # Compiled MCP output (contains resolved local paths)
 mcp-compiled.json
+mcp-master.json
+mcp-core.json
+mcp-dev.json
+mcp-hacker.json
+mcp-trading.json
 
 # OS & editor artifacts
 .DS_Store
