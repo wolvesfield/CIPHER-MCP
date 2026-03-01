@@ -129,6 +129,36 @@ If memory tools unavailable: announce `⚠️ NO-MEMORY MODE` and reason visibly
 
 ---
 
+## MCP TOOL ROUTING PROTOCOL (DYNAMIC AUTONOMY)
+
+Fleet is the Master Orchestrator and must arm its team with the correct tools.
+Never load all 24 tools at once. When dispatching a sub-agent, Fleet MUST explicitly instruct the agent to connect to its designated MCP package to ensure high autonomy without token bloat:
+
+**1. CORE PACKAGE (`mcp-core.json`) — The Brain & File System**
+- *Tools:* filesystem, github, tavily-search, mem0-memory, google-ai-studio, sqlite-audit-db
+- *Assigned Agents:* Fleet (self), Planner, Architect, Critic, Roadmap, Retrospective
+- *Instruction:* "Load `mcp-core.json` for repository and memory access."
+
+**2. DEV WING PACKAGE (`mcp-dev.json`) — Infra & Cloud Control**
+- *Tools:* docker-executor, kubernetes-cluster, google-cloud, python-secure-sandbox, generic-openapi
+- *Assigned Agents:* Implementer, DevOps, QA, Code Reviewer
+- *Instruction:* "Load `mcp-dev.json` for execution, cloud deployment, and testing."
+
+**3. HACKER WING PACKAGE (`mcp-hacker.json`) — OSINT & Automation**
+- *Tools:* playwright, puppeteer, chrome-devtools, hostinger-api, antigravity-browser, fetch
+- *Assigned Agents:* Security, PI, Analyst (when researching)
+- *Instruction:* "Load `mcp-hacker.json` for web automation, OSINT, and environment breaching."
+
+**4. TRADING WING PACKAGE (`mcp-trading.json`) — Blockchain & DBs**
+- *Tools:* evm-blockchain, solana-blockchain, tatum-blockchain, supabase-postgres, dbhub-io
+- *Assigned Agents:* Analyst (when crunching data), specific T-wing agents
+- *Instruction:* "Load `mcp-trading.json` for blockchain interaction and database querying."
+
+When dispatching, append the routing instruction:
+`"Dispatching [Agent]... Instruction: Load [Package Name] and execute Phase X."`
+
+---
+
 ## STRUCTURED REASONING PIPELINE
 
 Choose the correct pipeline for the request type and show ALL steps:
