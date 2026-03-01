@@ -83,7 +83,7 @@ Open `.env` and fill in every `REPLACE_ME` value:
 ### Step 3 — Validate your environment
 
 ```bash
-python mcp_enterprise_compiler.py --validate-env
+python bridge/mcp_enterprise_compiler.py --validate-env
 ```
 
 Expected output when all variables are set:
@@ -95,7 +95,7 @@ Expected output when all variables are set:
 ### Step 4 — AOT compile the mesh
 
 ```bash
-python mcp_enterprise_compiler.py
+python bridge/mcp_enterprise_compiler.py
 ```
 
 This pre-installs every `npx`/`uvx` package into `.mcp_env/` and writes
@@ -104,7 +104,7 @@ This pre-installs every `npx`/`uvx` package into `.mcp_env/` and writes
 For faster rebuilds after deps are already installed:
 
 ```bash
-python mcp_enterprise_compiler.py --skip-install
+python bridge/mcp_enterprise_compiler.py --skip-install
 ```
 
 Verify no runtime launchers remain:
@@ -149,6 +149,8 @@ only (core tools), then load wing packages (`mcp-dev.json`, `mcp-hacker.json`,
 ```
 CIPHER-MCP/
 ├── .env.example               # Secret template — copy to .env and fill in
+├── bridge/mcp-enterprise.json        # Canonical 28-server manifest (env-var placeholders)
+├── bridge/mcp_enterprise_compiler.py # AOT compiler — pre-installs deps, emits mcp-compiled.json
 ├── mcp-enterprise.json        # Canonical 28-server manifest (env-var placeholders)
 ├── mcp_enterprise_compiler.py # AOT compiler — pre-installs deps, emits mcp-compiled.json
 ├── littli-protocol.md         # Mission context for AI companion sessions
@@ -160,7 +162,7 @@ CIPHER-MCP/
 ```
 .env  ──load──▶  orchestrator process
                      │
-                     ├── mcp_enterprise_compiler.py  ──▶  .mcp_env/ (isolated binaries)
+                     ├── bridge/mcp_enterprise_compiler.py  ──▶  .mcp_env/ (isolated binaries)
                      │                                ──▶  mcp-compiled.json
                      │
                      └── MCP host  ──▶  mcp-master.json (default) / wing packages (on-demand)
@@ -184,6 +186,7 @@ The AOT compiler eliminates the 10–45 s cold-start penalty of `npx -y` / `uvx`
 2. `collect_dependencies()` — parses every `npx -y` / `uvx` entry, rewrites to local binary paths.
 3. `install_node_packages()` / `install_python_packages()` — bulk-installs into isolated envs.
 4. `validate_env_vars()` — warns about any missing `${VAR}` references.
+5. Emits `mcp-compiled.json` + `mcp-master.json` + wing packages (`mcp-core/dev/hacker/trading.json`). These are local build artifacts and are gitignored.
 5. Emits `mcp-compiled.json` + `mcp-master.json` + wing packages (`mcp-core/dev/hacker/trading.json`).
 
 ---
@@ -244,7 +247,7 @@ Enterprise Service Mesh compiled with the CIPHER-MCP AOT framework.
 
 ## The 28-Server Mesh
 
-> All sensitive values in `mcp-enterprise.json` use `${VAR_NAME}` syntax, substituted at runtime from `.env`.
+> All sensitive values in `bridge/mcp-enterprise.json` use `${VAR_NAME}` syntax, substituted at runtime from `.env`.
 
 | # | Server Key | Stack | Purpose |
 |---|---|---|---|
@@ -281,9 +284,9 @@ Enterprise Service Mesh compiled with the CIPHER-MCP AOT framework.
 
 ## Daily Use Checklist
 
-1. Run `python mcp_enterprise_compiler.py --validate-env` — confirm `PASSED`.
-2. If packages changed in `mcp-enterprise.json`, run full compile: `python mcp_enterprise_compiler.py`
-3. If only env values changed, fast rebuild: `python mcp_enterprise_compiler.py --skip-install`
+1. Run `python bridge/mcp_enterprise_compiler.py --validate-env` — confirm `PASSED`.
+2. If packages changed in `bridge/mcp-enterprise.json`, run full compile: `python bridge/mcp_enterprise_compiler.py`
+3. If only env values changed, fast rebuild: `python bridge/mcp_enterprise_compiler.py --skip-install`
 4. Test in Copilot Chat: *"List all repositories in the wolvesfield organization."*
 
 ---
@@ -291,3 +294,37 @@ Enterprise Service Mesh compiled with the CIPHER-MCP AOT framework.
 ## License
 
 See [LICENSE](LICENSE).
+
+---
+
+## Survival Mode Container Stack (Post-Surgery)
+
+This repo now supports the `arbiter/`, `bridge/`, `generals/`, and `prompts/`
+layout with a ready-to-run `docker-compose.yml` stack.
+
+```bash
+docker compose up -d --build
+```
+
+Services:
+- `arbiter` (FastAPI): `http://localhost:8000/health`
+- `mcp-bridge` (FastAPI): `http://localhost:8001/health`
+- `ollama`: `http://localhost:11434`
+- `redis`
+- `qdrant`: `http://localhost:6333`
+
+After first boot, pull your model in Ollama:
+
+```bash
+docker exec -it cipher-ollama ollama pull qwen2.5:14b
+```
+
+The bridge reads compiled MCP config from:
+
+- `/app/bridge/mcp-compiled.json`
+
+Generate it with:
+
+```bash
+python bridge/mcp_enterprise_compiler.py
+```

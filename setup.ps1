@@ -3,6 +3,10 @@
 CIPHER-MCP Universal Bootstrap — Windows
 
 .DESCRIPTION
+One-command deployment for CIPHER-MCP:
+1. Links 13 Agents, 9 Skills, Instructions.
+2. Creates workspace directories.
+3. Compiles the MCP ecosystem and role-based routing configs.
 One-command onboarding for any Windows machine.
 Links agents, skills, MCP tools, installs Arbiter deps,
 registers mcp-compiled.json with VS Code and Claude Desktop.
@@ -78,11 +82,23 @@ foreach ($Prompt in (Get-ChildItem -Path "$RepoRoot\prompts\*.md" -ErrorAction S
 
 # 7. Compile MCP Ecosystem
 Write-Host "🛠️ Compiling MCP Ecosystem (AOT Mode)..." -ForegroundColor Yellow
+cd "$RepoRoot"
 Set-Location $RepoRoot
 if (-not (Test-Path ".env")) {
     Write-Host "Creating .env from template..."
     Copy-Item ".env.example" ".env"
 }
+
+python bridge/mcp_enterprise_compiler.py
+
+Write-Host "✨ SUCCESS: Your Universal AI Master Repo is fully active." -ForegroundColor Cyan
+Write-Host "   - 13 Agents Linked"
+Write-Host "   - 9 Skills Linked"
+Write-Host "   - 28 MCP Servers Compiled to mcp-compiled.json"
+Write-Host "   - Default onboarding profile generated: mcp-master.json"
+Write-Host "   - Wing profiles generated: mcp-core/dev/hacker/trading.json"
+Write-Host "   - Workspace: $AgentOutputDir ready."
+Write-Host "NOTE: Point your IDE/Host to $RepoRoot\mcp-master.json for selective tool activation." -ForegroundColor Yellow
 python mcp_enterprise_compiler.py
 
 # 8. Install Arbiter / Bridge Python dependencies

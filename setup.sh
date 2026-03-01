@@ -1,4 +1,7 @@
 #!/bin/bash
+# Universal Fleet Master Bootstrap Script for Linux/macOS (VPS)
+# Goal: One-command deployment of Agents, Skills, Instructions, and MCP routing configs.
+
 # =============================================================================
 # CIPHER-MCP — Universal Bootstrap Script (Linux / macOS / KVM8)
 # One command onboards any machine: agents, skills, MCP tools, arbiter deps.
@@ -82,8 +85,16 @@ if [ ! -f ".env" ]; then
     cp .env.example .env
 fi
 
-python3 mcp_enterprise_compiler.py
+python3 bridge/mcp_enterprise_compiler.py
 
+echo -e "\033[1;35m✨ SUCCESS: Your Universal AI Master Repo is fully active.\033[0m"
+echo -e "\033[1;32m   - 13 Agents Linked\033[0m"
+echo -e "\033[1;32m   - 9 Skills Linked\033[0m"
+echo -e "\033[1;32m   - 28 MCP Servers Compiled to mcp-compiled.json\033[0m"
+echo -e "\033[1;32m   - Default onboarding profile generated: mcp-master.json\033[0m"
+echo -e "\033[1;32m   - Wing profiles generated: mcp-core/dev/hacker/trading.json\033[0m"
+echo -e "\033[1;32m   - Workspace: ~/agent-output/ ready.\033[0m"
+echo -e "\033[1;33mNOTE: Point your IDE/Host to $REPO_ROOT/mcp-master.json for selective tool activation.\033[0m"
 # 8. Install Arbiter / Bridge Python dependencies
 echo -e "\033[1;33m🤖 Installing Consensus Arbiter dependencies...\033[0m"
 pip3 install fastapi uvicorn httpx pydantic --quiet

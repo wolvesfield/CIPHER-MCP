@@ -7,7 +7,7 @@ from pathlib import Path
 import sys
 
 ROOT = Path(__file__).resolve().parent
-MANIFEST = ROOT / "mcp-enterprise.json"
+MANIFEST = ROOT / "bridge" / "mcp-enterprise.json"
 
 
 def fail(msg: str) -> None:
@@ -17,7 +17,7 @@ def fail(msg: str) -> None:
 
 def main() -> None:
     if not MANIFEST.exists():
-        fail("mcp-enterprise.json is missing")
+        fail("bridge/mcp-enterprise.json is missing")
 
     with MANIFEST.open(encoding="utf-8") as fh:
         data = json.load(fh)

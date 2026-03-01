@@ -1,8 +1,6 @@
-"""Backward-compatible wrapper for bridge/mcp_enterprise_compiler.py."""
-
-from bridge.mcp_enterprise_compiler import main
 """
 mcp_enterprise_compiler.py
+==========================
 Ahead-Of-Time (AOT) compiler for the CIPHER-MCP MCP server ecosystem.
 
 What it does
@@ -179,8 +177,18 @@ def collect_dependencies(
             for key, value in server["env"].items():
                 if isinstance(value, str) and value.startswith("${") and value.endswith("}"):
                     sanitized_env[key] = value
-                else:
-                    sanitized_env[key] = f"${{{key}}}"
+                    continue
+
+                # Preserve explicit static literals (ports/booleans) so users
+                # don't get forced into unnecessary env vars.
+                if isinstance(value, str) and (
+                    re.fullmatch(r"\d+", value)
+                    or value.lower() in {"true", "false"}
+                ):
+                    sanitized_env[key] = value
+                    continue
+
+                sanitized_env[key] = f"${{{key}}}"
             server["env"] = sanitized_env
 
         # ------------------------------------------------------------------
@@ -307,12 +315,12 @@ def main() -> None:
         description="AOT compiler for the CIPHER-MCP MCP server ecosystem."
     )
     parser.add_argument(
-        "--input", default="mcp-enterprise.json",
-        help="Source manifest (default: mcp-enterprise.json)"
+        "--input", default=str(REPO_ROOT / "mcp-enterprise.json"),
+        help="Source manifest (default: bridge/mcp-enterprise.json)"
     )
     parser.add_argument(
-        "--output", default="mcp-compiled.json",
-        help="Compiled output (default: mcp-compiled.json)"
+        "--output", default=str(REPO_ROOT / "mcp-compiled.json"),
+        help="Compiled output (default: bridge/mcp-compiled.json)"
     )
     parser.add_argument(
         "--validate-env", action="store_true",
@@ -386,6 +394,29 @@ def main() -> None:
         "mcp-trading.json": ["evm-blockchain", "solana-blockchain", "tatum-blockchain", "supabase-postgres", "dbhub-io"],
         "mcp-hacker.json": ["playwright", "puppeteer", "chrome-devtools", "hostinger-api", "antigravity-browser", "fetch"]
     }
+
+    assignment_count: dict[str, int] = {}
+    for group in packages.values():
+        for server_name in group:
+            assignment_count[server_name] = assignment_count.get(server_name, 0) + 1
+
+    duplicate_assignments = sorted(
+        name for name, count in assignment_count.items() if count > 1
+    )
+    if duplicate_assignments:
+        print(
+            "\n[!] NOTE: The following servers are mapped to multiple wing profiles:\n"
+            + "\n".join(f"    - {name}" for name in duplicate_assignments)
+        )
+
+    assigned_servers = set(assignment_count)
+    unassigned = sorted(set(servers.keys()) - assigned_servers)
+    if unassigned:
+        print(
+            "\n[!] NOTE: The following servers are only available in mcp-compiled.json "
+            "unless you add them to a wing profile:\n"
+            + "\n".join(f"    - {name}" for name in unassigned)
+        )
 
     for filename, server_list in packages.items():
         sub_config = {"mcpServers": {k: servers[k] for k in server_list if k in servers}}

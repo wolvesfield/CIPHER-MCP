@@ -5,7 +5,12 @@
 .mcp_env/
 
 # Compiled MCP output (contains resolved local paths)
-mcp-compiled.json
+bridge/mcp-compiled.json
+bridge/mcp-master.json
+bridge/mcp-core.json
+bridge/mcp-dev.json
+bridge/mcp-hacker.json
+bridge/mcp-trading.json
 
 # OS & editor artifacts
 .DS_Store

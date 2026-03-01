@@ -1,0 +1,78 @@
+version: "3.9"
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: cipher-ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    networks:
+      - cipher-net
+    mem_limit: 22g
+
+  arbiter:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.arbiter
+    container_name: cipher-arbiter
+    restart: unless-stopped
+    depends_on:
+      - ollama
+      - redis
+      - qdrant
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OLLAMA_BASE_URL=http://ollama:11434
+    ports:
+      - "8000:8000"
+    networks:
+      - cipher-net
+    mem_limit: 512m
+
+  mcp-bridge:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.bridge
+    container_name: cipher-mcp-bridge
+    restart: unless-stopped
+    depends_on:
+      - redis
+    environment:
+      - MCP_CONFIG_PATH=/app/bridge/mcp-compiled.json
+    ports:
+      - "8001:8001"
+    networks:
+      - cipher-net
+    mem_limit: 512m
+
+  redis:
+    image: redis:7-alpine
+    container_name: cipher-redis
+    restart: unless-stopped
+    networks:
+      - cipher-net
+    mem_limit: 256m
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: cipher-qdrant
+    restart: unless-stopped
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant-data:/qdrant/storage
+    networks:
+      - cipher-net
+    mem_limit: 1g
+
+networks:
+  cipher-net:
+    driver: bridge
+
+volumes:
+  ollama-data:
+  qdrant-data:

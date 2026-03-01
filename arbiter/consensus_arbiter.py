@@ -1,6 +1,20 @@
+from __future__ import annotations
+
+import os
+from fastapi import FastAPI
+
+app = FastAPI(title="Cipher Consensus Arbiter", version="1.0.0")
+
+
+@app.get("/health")
+def health() -> dict[str, str]:
+    return {
+        "status": "ok",
+        "service": "arbiter",
+        "ollama_base_url": os.getenv("OLLAMA_BASE_URL", "http://ollama:11434"),
+    }
 """
 CIPHER OPS — Consensus Arbiter
-================================
 FastAPI async service implementing the Team of Rivals M1-Parallel doctrine.
 Dispatches SwarmTasks to 3 independent Generals simultaneously, collects
 confidence-scored votes, and runs 4 consensus strategies to produce a
