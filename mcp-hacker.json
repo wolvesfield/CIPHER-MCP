@@ -1,0 +1,36 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "/workspace/CIPHER-MCP/.mcp_env/node/node_modules/.bin/mcp",
+      "args": []
+    },
+    "puppeteer": {
+      "command": "/workspace/CIPHER-MCP/.mcp_env/node/node_modules/.bin/server-puppeteer",
+      "args": []
+    },
+    "chrome-devtools": {
+      "command": "/workspace/CIPHER-MCP/.mcp_env/node/node_modules/.bin/chrome-devtools-mcp",
+      "args": []
+    },
+    "hostinger-api": {
+      "command": "/workspace/CIPHER-MCP/.mcp_env/node/node_modules/.bin/mcp-api-bridge",
+      "args": [
+        "https://api.hostinger.com/v1"
+      ],
+      "env": {
+        "HOSTINGER_API_TOKEN": "${HOSTINGER_API_TOKEN}"
+      }
+    },
+    "antigravity-browser": {
+      "command": "/workspace/CIPHER-MCP/.mcp_env/node/node_modules/.bin/antigravity-mcp-bridge",
+      "args": [],
+      "env": {
+        "ANTIGRAVITY_PORT": "${ANTIGRAVITY_PORT}"
+      }
+    },
+    "fetch": {
+      "command": "/workspace/CIPHER-MCP/.mcp_env/python/bin/mcp-server-fetch",
+      "args": []
+    }
+  }
+}

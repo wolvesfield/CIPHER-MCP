@@ -10,7 +10,7 @@ MCP server mesh, agent skills, and operational instructions for the **Cipher Ops
 
 This is the single source of truth for:
 
-- **MCP Server Mesh** — 24-server enterprise manifest with AOT compilation for sub-150 ms boot
+- **MCP Server Mesh** — 28-server enterprise manifest with AOT compilation for sub-150 ms boot
 - **Agent Skills & Instructions** — prompts, behaviors, and operational configs for every agent tier
 - **Infrastructure Configs** — secrets templates, compilation tooling, and deployment guides
 
@@ -29,13 +29,13 @@ This repo does **not** contain ComfyUI, Midjourney, LoRA training, or any image/
 │  (Wing leads — Trading, Hacker, Ops)         │
 ├─────────────────────────────────────────────┤
 │           SPECIALIZED AGENTS                 │
-│  (24 MCP servers — each a focused tool)      │
+│  (28 MCP servers — each a focused tool)      │
 └─────────────────────────────────────────────┘
 ```
 
 - **Super Agents** — top-level orchestrators that receive commands (WhatsApp/Telegram/voice via OpenClaw), decide which wing handles the task, and coordinate cross-wing operations.
 - **Master Agents** — wing leaders (Trading Wing, Hacker Wing, Infrastructure Wing) that decompose tasks and dispatch to specialized agents.
-- **Specialized Agents** — the 24 MCP servers below. Each is a focused tool: blockchain, database, browser automation, code execution, memory, etc.
+- **Specialized Agents** — the 28 MCP servers below. Each is a focused tool: blockchain, database, browser automation, code execution, memory, etc.
 
 ---
 
@@ -89,7 +89,7 @@ python mcp_enterprise_compiler.py --validate-env
 Expected output when all variables are set:
 
 ```
-[+] validate-env PASSED -- all 24 server env vars are set and non-placeholder.
+[+] validate-env PASSED -- all 28 server env vars are set and non-placeholder.
 ```
 
 ### Step 4 — AOT compile the mesh
@@ -99,7 +99,7 @@ python mcp_enterprise_compiler.py
 ```
 
 This pre-installs every `npx`/`uvx` package into `.mcp_env/` and writes
-`mcp-compiled.json` with absolute binary paths.
+`mcp-compiled.json` with absolute binary paths plus wing-scoped routing configs.
 
 For faster rebuilds after deps are already installed:
 
@@ -124,19 +124,23 @@ make compile-fast  # rewrite only, skips installs
 
 ### Step 5 — Wire up your MCP host
 
+**Recommended default for Master Agent onboarding:** start with `mcp-master.json`
+only (core tools), then load wing packages (`mcp-dev.json`, `mcp-hacker.json`,
+`mcp-trading.json`) on demand per task.
+
 **VS Code / GitHub Copilot Chat** — add to `settings.json` or `.vscode/mcp.json`:
 
 ```json
 {
   "mcp": {
-    "servers": "<contents of mcp-compiled.json>.mcpServers"
+    "servers": "<contents of mcp-master.json>.mcpServers"
   }
 }
 ```
 
-**Cursor** — Settings → MCP → paste contents of `mcp-compiled.json`.
+**Cursor** — Settings → MCP → paste contents of `mcp-master.json`.
 
-**Claude Desktop** — merge `mcpServers` from `mcp-compiled.json` into `claude_desktop_config.json`.
+**Claude Desktop** — merge `mcpServers` from `mcp-master.json` into `claude_desktop_config.json`.
 
 ---
 
@@ -145,7 +149,7 @@ make compile-fast  # rewrite only, skips installs
 ```
 CIPHER-MCP/
 ├── .env.example               # Secret template — copy to .env and fill in
-├── mcp-enterprise.json        # Canonical 24-server manifest (env-var placeholders)
+├── mcp-enterprise.json        # Canonical 28-server manifest (env-var placeholders)
 ├── mcp_enterprise_compiler.py # AOT compiler — pre-installs deps, emits mcp-compiled.json
 ├── littli-protocol.md         # Mission context for AI companion sessions
 └── README.md
@@ -159,7 +163,7 @@ CIPHER-MCP/
                      ├── mcp_enterprise_compiler.py  ──▶  .mcp_env/ (isolated binaries)
                      │                                ──▶  mcp-compiled.json
                      │
-                     └── MCP host  ──▶  mcp-compiled.json  ──▶  24 × MCP server processes
+                     └── MCP host  ──▶  mcp-master.json (default) / wing packages (on-demand)
 ```
 
 ---
@@ -180,7 +184,7 @@ The AOT compiler eliminates the 10–45 s cold-start penalty of `npx -y` / `uvx`
 2. `collect_dependencies()` — parses every `npx -y` / `uvx` entry, rewrites to local binary paths.
 3. `install_node_packages()` / `install_python_packages()` — bulk-installs into isolated envs.
 4. `validate_env_vars()` — warns about any missing `${VAR}` references.
-5. Emits `mcp-compiled.json` — point your MCP host here.
+5. Emits `mcp-compiled.json` + `mcp-master.json` + wing packages (`mcp-core/dev/hacker/trading.json`).
 
 ---
 
@@ -190,11 +194,11 @@ Use this when asking an AI assistant to generate **new** MCP servers for the mes
 
 ```
 # SYSTEM DIRECTIVE: ENTERPRISE MCP ARCHITECT (GHEC-FIRST)
-You are an elite systems architect adding a new MCP server to a 24-node
+You are an elite systems architect adding a new MCP server to a 28-node
 Enterprise Service Mesh compiled with the CIPHER-MCP AOT framework.
 
 ## OPERATING CONTEXT
-* Ecosystem: 24 concurrent MCP servers (Blockchain, Docker, Supabase, Figma).
+* Ecosystem: 28 concurrent MCP servers (Blockchain, Docker, Supabase, Figma).
 * Execution: AOT compiled — DO NOT use `npx -y` or `uvx` at runtime.
 * Licensing: Strict GHEC/SSO compliance (enterprise: nochef, org: wolvesfield).
 
@@ -233,12 +237,12 @@ Enterprise Service Mesh compiled with the CIPHER-MCP AOT framework.
 | Brittleness Vector | Diagnostic Signature | Mitigation |
 |---|---|---|
 | **GHEC Token Expiration** | `401 Unauthorized` or SAML errors | Pre-flight token check. Re-authenticate via GitHub SSO before routing to the LLM. |
-| **Context Window Saturation** | LLM ignores instructions or hallucinates tool args | 24 servers ≈ 120+ tools. Use **Semantic Tool Routing**: inject only the 3–5 most relevant servers per turn. |
+| **Context Window Saturation** | LLM ignores instructions or hallucinates tool args | 28 servers ≈ 120+ tools. Use **Semantic Tool Routing**: inject only the 3–5 most relevant servers per turn. |
 | **Orphaned Process Leaks** | Host memory spikes; SQLite locks | `SIGTERM` all children on shutdown, `SIGKILL` after 3 s. |
 
 ---
 
-## The 24-Server Mesh
+## The 28-Server Mesh
 
 > All sensitive values in `mcp-enterprise.json` use `${VAR_NAME}` syntax, substituted at runtime from `.env`.
 
@@ -268,6 +272,10 @@ Enterprise Service Mesh compiled with the CIPHER-MCP AOT framework.
 | 22 | `github-enterprise-cloud` | Node/npx | GHEC — enterprise-scoped GitHub (org: wolvesfield) |
 | 23 | `kubernetes-cluster` | Node/npx | Kubernetes cluster management |
 | 24 | `solana-blockchain` | Node/npx | Solana on-chain interactions |
+| 25 | `google-cloud` | Node/npx | Google Cloud tooling (GCP MCP server) |
+| 26 | `google-ai-studio` | Node/npx | Gemini/Google AI Studio integration |
+| 27 | `hostinger-api` | Node/npx | Hostinger API automation |
+| 28 | `antigravity-browser` | Node/npx | AntiGravity browser bridge |
 
 ---
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 # Universal Fleet Master Bootstrap Script for Linux/macOS (VPS)
-# Goal: One-command deployment of Agents, Skills, Instructions, and 24 MCP Tools.
+# Goal: One-command deployment of Agents, Skills, Instructions, and MCP routing configs.
 
 set -e
 
@@ -71,7 +71,7 @@ for PROMPT_FILE in "$REPO_ROOT/prompts/"*.md; do
 done
 
 # 7. Compile MCP Ecosystem
-echo -e "\033[1;33m🛠️ Compiling 24-Server MCP Ecosystem (AOT Mode)...\033[0m"
+echo -e "\033[1;33m🛠️ Compiling MCP Ecosystem (AOT Mode)...\033[0m"
 cd "$REPO_ROOT"
 if [ ! -f ".env" ]; then
     echo "Creating .env from template (Please update your keys later)..."
@@ -83,6 +83,8 @@ python3 mcp_enterprise_compiler.py
 echo -e "\033[1;35m✨ SUCCESS: Your Universal AI Master Repo is fully active.\033[0m"
 echo -e "\033[1;32m   - 13 Agents Linked\033[0m"
 echo -e "\033[1;32m   - 9 Skills Linked\033[0m"
-echo -e "\033[1;32m   - 24 MCP Servers Compiled to mcp-compiled.json\033[0m"
+echo -e "\033[1;32m   - 28 MCP Servers Compiled to mcp-compiled.json\033[0m"
+echo -e "\033[1;32m   - Default onboarding profile generated: mcp-master.json\033[0m"
+echo -e "\033[1;32m   - Wing profiles generated: mcp-core/dev/hacker/trading.json\033[0m"
 echo -e "\033[1;32m   - Workspace: ~/agent-output/ ready.\033[0m"
-echo -e "\033[1;33mNOTE: Point your IDE/Host to $REPO_ROOT/mcp-compiled.json to use your tools.\033[0m"
+echo -e "\033[1;33mNOTE: Point your IDE/Host to $REPO_ROOT/mcp-master.json for selective tool activation.\033[0m"
