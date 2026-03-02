@@ -1,6 +1,17 @@
 version: "3.9"
 
+# ============================================================
+# CIPHER OPS — THE GOVERNMENT
+# 4-General Autonomous Army on KVM8 VPS
+# VP (Arbiter) :8000 | Alpha :8010 | Bravo :8011 | Charlie :8012 | Delta :8013
+#
+# Deployment layout on VPS (/opt/cipher-ops/):
+#   CIPHER-MCP-temp/   ← this file lives here (The Brain)
+#   cipher-ops/        ← The Body (runtime code)
+# ============================================================
+
 services:
+  # ── Inference Engine ────────────────────────────────────
   ollama:
     image: ollama/ollama:latest
     container_name: cipher-ollama
@@ -12,7 +23,12 @@ services:
     networks:
       - cipher-net
     mem_limit: 22g
+    deploy:
+      resources:
+        reservations:
+          memory: 16g
 
+  # ── Vice President (Consensus Arbiter) ──────────────────
   arbiter:
     build:
       context: .
@@ -26,13 +42,139 @@ services:
     environment:
       - GEMINI_API_KEY=${GEMINI_API_KEY}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
       - OLLAMA_BASE_URL=http://ollama:11434
+      - GENERAL_ALPHA_URL=http://general-alpha:8010
+      - GENERAL_BRAVO_URL=http://general-bravo:8011
+      - GENERAL_CHARLIE_URL=http://general-charlie:8012
+      - GENERAL_DELTA_URL=http://general-delta:8013
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
     ports:
       - "8000:8000"
     networks:
       - cipher-net
     mem_limit: 512m
 
+  # ── General Alpha — The Scout (Gemini 3 Pro) ───────────
+  general-alpha:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.general
+    container_name: cipher-general-alpha
+    restart: unless-stopped
+    depends_on:
+      - redis
+      - qdrant
+      - ollama
+    environment:
+      - GENERAL_ID=alpha
+      - GENERAL_PORT=8010
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - QDRANT_HOST=qdrant
+      - REDIS_HOST=redis
+    volumes:
+      - ../cipher-ops/cipher_ops:/app/cipher_ops:ro
+      - ../cipher-ops/run_general.py:/app/run_general.py:ro
+      - ./arbiter/agent-cards:/app/arbiter/agent-cards:ro
+    ports:
+      - "8010:8010"
+    networks:
+      - cipher-net
+    mem_limit: 1g
+
+  # ── General Bravo — The Builder (GPT-5.3-Codex) ────────
+  general-bravo:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.general
+    container_name: cipher-general-bravo
+    restart: unless-stopped
+    depends_on:
+      - redis
+      - qdrant
+      - ollama
+    environment:
+      - GENERAL_ID=bravo
+      - GENERAL_PORT=8011
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - QDRANT_HOST=qdrant
+      - REDIS_HOST=redis
+    volumes:
+      - ../cipher-ops/cipher_ops:/app/cipher_ops:ro
+      - ../cipher-ops/run_general.py:/app/run_general.py:ro
+      - ./arbiter/agent-cards:/app/arbiter/agent-cards:ro
+    ports:
+      - "8011:8011"
+    networks:
+      - cipher-net
+    mem_limit: 1g
+
+  # ── General Charlie — The Guardian (Claude Opus 4.6) ────
+  general-charlie:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.general
+    container_name: cipher-general-charlie
+    restart: unless-stopped
+    depends_on:
+      - redis
+      - qdrant
+      - ollama
+    environment:
+      - GENERAL_ID=charlie
+      - GENERAL_PORT=8012
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - QDRANT_HOST=qdrant
+      - REDIS_HOST=redis
+    volumes:
+      - ../cipher-ops/cipher_ops:/app/cipher_ops:ro
+      - ../cipher-ops/run_general.py:/app/run_general.py:ro
+      - ./arbiter/agent-cards:/app/arbiter/agent-cards:ro
+    ports:
+      - "8012:8012"
+    networks:
+      - cipher-net
+    mem_limit: 1g
+
+  # ── General Delta — The Operator (Qwen3-30B Local) ─────
+  general-delta:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.general
+    container_name: cipher-general-delta
+    restart: unless-stopped
+    depends_on:
+      - redis
+      - qdrant
+      - ollama
+    environment:
+      - GENERAL_ID=delta
+      - GENERAL_PORT=8013
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - QDRANT_HOST=qdrant
+      - REDIS_HOST=redis
+      - ALPACA_API_KEY=${ALPACA_API_KEY}
+      - ALPACA_SECRET_KEY=${ALPACA_SECRET_KEY}
+      - BINANCE_API_KEY=${BINANCE_API_KEY}
+      - BINANCE_SECRET_KEY=${BINANCE_SECRET_KEY}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
+      - PAPER_TRADING_ONLY=${PAPER_TRADING_ONLY:-true}
+    volumes:
+      - ../cipher-ops/cipher_ops:/app/cipher_ops:ro
+      - ../cipher-ops/run_general.py:/app/run_general.py:ro
+      - ./arbiter/agent-cards:/app/arbiter/agent-cards:ro
+    ports:
+      - "8013:8013"
+    networks:
+      - cipher-net
+    mem_limit: 2g
+
+  # ── MCP-A2A Bridge ─────────────────────────────────────
   mcp-bridge:
     build:
       context: .
@@ -49,14 +191,20 @@ services:
       - cipher-net
     mem_limit: 512m
 
+  # ── Shared Brain: Redis ────────────────────────────────
   redis:
     image: redis:7-alpine
     container_name: cipher-redis
     restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
     networks:
       - cipher-net
-    mem_limit: 256m
+    mem_limit: 512m
 
+  # ── Shared Brain: Qdrant (Vector Memory) ───────────────
   qdrant:
     image: qdrant/qdrant:latest
     container_name: cipher-qdrant
@@ -69,6 +217,24 @@ services:
       - cipher-net
     mem_limit: 1g
 
+  # ── Shared Brain: MinIO (Data Lake) ────────────────────
+  minio:
+    image: minio/minio:latest
+    container_name: cipher-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ACCESS_KEY:-cipher}
+      - MINIO_ROOT_PASSWORD=${MINIO_SECRET_KEY:-cipherops2026}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio-data:/data
+    networks:
+      - cipher-net
+    mem_limit: 1g
+
 networks:
   cipher-net:
     driver: bridge
@@ -76,3 +242,5 @@ networks:
 volumes:
   ollama-data:
   qdrant-data:
+  minio-data:
+  redis-data:

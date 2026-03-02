@@ -1,9 +1,9 @@
 {
-  "name": "Cipher Ops Consensus Arbiter",
-  "description": "Async event-driven consensus arbiter for the Team of Rivals M1-Parallel architecture. Dispatches SwarmTasks to 3 Generals, collects confidence-scored votes, and runs 4 consensus strategies.",
-  "version": "1.0.0",
+  "name": "Cipher Ops — Vice President (Consensus Arbiter)",
+  "description": "Async event-driven consensus arbiter for the 4-General Government architecture. Dispatches SwarmTasks to Alpha (Scout), Bravo (Builder), Charlie (Guardian), Delta (Operator). Runs 24/7 autonomously on KVM8. Makes ALL decisions — escalates to Broski only for live trading flip, budget changes, or new mission scope.",
+  "version": "2.0.0",
   "provider": {
-    "organization": "Cipher Ops \u2014 Legacy Foundation",
+    "organization": "Cipher Ops — The Government",
     "url": "https://github.com/wolvesfield/CIPHER-MCP"
   },
   "supportedInterfaces": [
@@ -29,123 +29,80 @@
     {
       "id": "task-dispatch",
       "name": "SwarmTask Dispatch",
-      "description": "Broadcast a task to all 3 Generals in parallel with Minimum Intel Window enforcement",
-      "tags": [
-        "dispatch",
-        "broadcast",
-        "parallel",
-        "task"
-      ],
+      "description": "Broadcast a task to all 4 Generals in parallel with domain-weighted consensus. Routes to Alpha (intel), Bravo (build), Charlie (review), Delta (execute).",
+      "tags": ["dispatch", "broadcast", "parallel", "task", "routing"],
       "examples": [
-        "Submit BTC trading signal for consensus",
-        "Request security audit across all Generals"
+        "Submit BTC trading signal for 4-General consensus",
+        "Dispatch geopolitical event for multi-General analysis"
       ],
-      "inputModes": [
-        "application/json"
-      ],
-      "outputModes": [
-        "application/json"
-      ]
+      "inputModes": ["application/json"],
+      "outputModes": ["application/json"]
     },
     {
       "id": "consensus-early-termination",
       "name": "Early Termination Consensus",
-      "description": "First General above confidence threshold wins \u2014 for time-critical trades",
-      "tags": [
-        "consensus",
-        "fast",
-        "trading",
-        "early-termination"
-      ],
-      "examples": [
-        "Fast BTC scalp decision"
-      ],
-      "inputModes": [
-        "application/json"
-      ],
-      "outputModes": [
-        "application/json"
-      ]
+      "description": "First General above confidence threshold wins — for time-critical trades and arbitrage",
+      "tags": ["consensus", "fast", "trading", "early-termination"],
+      "examples": ["Fast BTC scalp decision", "Arbitrage window closing"],
+      "inputModes": ["application/json"],
+      "outputModes": ["application/json"]
     },
     {
       "id": "consensus-confidence-weighted",
       "name": "Confidence-Weighted Voting",
-      "description": "Highest confidence General wins \u2014 default strategy for balanced decisions",
-      "tags": [
-        "consensus",
-        "voting",
-        "weighted",
-        "default"
-      ],
-      "examples": [
-        "Evaluate portfolio rebalance proposal"
-      ],
-      "inputModes": [
-        "application/json"
-      ],
-      "outputModes": [
-        "application/json"
-      ]
+      "description": "Domain-weighted voting across 4 Generals with per-domain authority multipliers",
+      "tags": ["consensus", "voting", "weighted", "default"],
+      "examples": ["Evaluate portfolio rebalance proposal"],
+      "inputModes": ["application/json"],
+      "outputModes": ["application/json"]
     },
     {
       "id": "consensus-full-synthesis",
       "name": "Full Synthesis",
-      "description": "Merge all General responses into a combined analysis \u2014 for research tasks",
-      "tags": [
-        "consensus",
-        "synthesis",
-        "merge",
-        "research"
-      ],
-      "examples": [
-        "Comprehensive market analysis combining all perspectives"
-      ],
-      "inputModes": [
-        "application/json"
-      ],
-      "outputModes": [
-        "application/json"
-      ]
+      "description": "Merge all 4 General responses into a combined analysis — for research and macro analysis",
+      "tags": ["consensus", "synthesis", "merge", "research"],
+      "examples": ["Comprehensive market analysis combining all 4 perspectives"],
+      "inputModes": ["application/json"],
+      "outputModes": ["application/json"]
     },
     {
       "id": "consensus-red-team-override",
       "name": "Red Team Override",
-      "description": "Any General flagging CRITICAL risk overrides the majority \u2014 safety-first for high-stakes ops",
-      "tags": [
-        "consensus",
-        "red-team",
-        "safety",
-        "override",
-        "risk"
-      ],
-      "examples": [
-        "Evaluate smart contract for rug pull before investing"
-      ],
-      "inputModes": [
-        "application/json"
-      ],
-      "outputModes": [
-        "application/json"
-      ]
+      "description": "Charlie (Guardian) reviews and can VETO any strategy. Any General flagging CRITICAL risk overrides the majority.",
+      "tags": ["consensus", "red-team", "safety", "override", "risk", "veto"],
+      "examples": ["Evaluate smart contract for rug pull before investing"],
+      "inputModes": ["application/json"],
+      "outputModes": ["application/json"]
     },
     {
       "id": "general-health",
-      "name": "General Health Check",
-      "description": "Check availability and response times of all 3 Generals",
-      "tags": [
-        "health",
-        "monitoring",
-        "status"
-      ],
+      "name": "4-General Health Check",
+      "description": "Check availability and response times of all 4 Generals and their 18 soldiers. Safety rules: Charlie down → pause trades, Delta down → halt execution.",
+      "tags": ["health", "monitoring", "status", "safety"],
       "examples": [
-        "Are all Generals online?"
+        "Are all 4 Generals and 18 soldiers online?",
+        "Check for degraded Generals"
       ],
-      "inputModes": [
-        "application/json"
-      ],
-      "outputModes": [
-        "application/json"
-      ]
+      "inputModes": ["application/json"],
+      "outputModes": ["application/json"]
+    },
+    {
+      "id": "help-protocol",
+      "name": "Help Protocol",
+      "description": "When a soldier fails 3x at low confidence, VP identifies the best helper General and routes the subtask. Both soldiers learn from the struggle.",
+      "tags": ["help", "failover", "learning", "cross-general"],
+      "examples": ["D-01 Treasury fails 3x on complex arb → route to B-01 Corps for strategy help"],
+      "inputModes": ["application/json"],
+      "outputModes": ["application/json"]
+    },
+    {
+      "id": "teaching-cycle",
+      "name": "Nightly Teaching Cycle",
+      "description": "2 AM nightly: collect best outputs, cross-reference consensus knowledge, broadcast to all Generals. The Government learns while Broski sleeps.",
+      "tags": ["teaching", "learning", "nightly", "consensus-knowledge"],
+      "examples": ["Run nightly knowledge consolidation across all 4 Generals"],
+      "inputModes": ["application/json"],
+      "outputModes": ["application/json"]
     }
   ]
 }

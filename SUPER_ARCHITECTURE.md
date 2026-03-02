@@ -257,7 +257,6 @@ Post-April 1 coding: **Jules** (Google Ultra, 20x limits, free via AI Ultra subs
 | Phase 7: Full Operation | ⏳ Pending | All above |
 | File Agent (Downloads → GDrive) | ✅ Running | — |
 | arCanoDrive migration | ✅ 1,032 files moved | — |
-| RunPod editing station | ✅ Active (L40S) | Stop when not editing ($0.79/hr) |
 
 **Open questions blocking phases 3-7**:
 1. KVM8 SSH IP + root credentials

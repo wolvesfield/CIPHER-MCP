@@ -1,0 +1,139 @@
+{
+  "name": "General Delta — Qwen3-30B (Ollama Local)",
+  "description": "Local VPS General running Qwen3-30B-A3B via Ollama for zero-latency trade execution, arbitrage, system monitoring, and signal publishing. The Operator — runs all 5 revenue engines on KVM8.",
+  "version": "1.0.0",
+  "provider": {
+    "organization": "Cipher Ops — The Government",
+    "url": "https://github.com/wolvesfield/CIPHER-MCP"
+  },
+  "supportedInterfaces": [
+    {
+      "url": "http://localhost:8013",
+      "protocolBinding": "HTTP+JSON",
+      "protocolVersion": "1.0"
+    }
+  ],
+  "capabilities": {
+    "streaming": true,
+    "pushNotifications": true,
+    "extendedAgentCard": false
+  },
+  "securitySchemes": {},
+  "securityRequirements": [],
+  "defaultInputModes": [
+    "application/json",
+    "text/plain"
+  ],
+  "defaultOutputModes": [
+    "application/json",
+    "text/plain"
+  ],
+  "skills": [
+    {
+      "id": "crypto-trade",
+      "name": "Crypto Trader (D-01 Treasury)",
+      "description": "BTC/ETH/SOL/alts via Binance/Kraken WebSocket. Spot + futures. 24/7 non-stop execution. Paper trading by default — live flip requires Broski approval.",
+      "tags": [
+        "trading",
+        "crypto",
+        "execution",
+        "binance",
+        "kraken",
+        "revenue-engine"
+      ],
+      "examples": [
+        "Execute BTC LONG at market with 2% portfolio allocation",
+        "Place ETH limit sell at $4200 with trailing stop"
+      ],
+      "inputModes": ["application/json"],
+      "outputModes": ["application/json"]
+    },
+    {
+      "id": "commodity-trade",
+      "name": "Stock/Commodity Trader (D-02 WallSt)",
+      "description": "USOIL, XAUUSD, equities via Alpaca. Event-driven: A-04 DIA geopolitical signal triggers execution. Market hours aware.",
+      "tags": [
+        "trading",
+        "stocks",
+        "commodities",
+        "oil",
+        "gold",
+        "alpaca",
+        "revenue-engine"
+      ],
+      "examples": [
+        "Execute USOIL LONG on Iran tensions signal with 2% allocation",
+        "Buy XAUUSD on Fed rate decision signal"
+      ],
+      "inputModes": ["application/json"],
+      "outputModes": ["application/json"]
+    },
+    {
+      "id": "arbitrage",
+      "name": "Arbitrage Engine (D-03 FedRes)",
+      "description": "Cross-exchange price diffs, funding rate arb, DEX/CEX spreads. Low risk, consistent small gains 24/7.",
+      "tags": [
+        "trading",
+        "arbitrage",
+        "dex",
+        "cex",
+        "funding-rate",
+        "revenue-engine"
+      ],
+      "examples": [
+        "Detect BTC price diff between Binance and Kraken > 0.3%",
+        "Execute SOL funding rate arb on positive funding"
+      ],
+      "inputModes": ["application/json"],
+      "outputModes": ["application/json"]
+    },
+    {
+      "id": "watchdog",
+      "name": "System Watchdog (D-04 SecretSv)",
+      "description": "Pings all 4 Generals every 30s. Self-healing: General down → VP redistributes. Monitors KVM8 CPU/RAM/disk.",
+      "tags": [
+        "monitoring",
+        "health",
+        "watchdog",
+        "self-healing",
+        "system"
+      ],
+      "examples": [
+        "Check all General health status",
+        "Alert on KVM8 disk usage > 85%"
+      ],
+      "inputModes": ["application/json"],
+      "outputModes": ["application/json"]
+    },
+    {
+      "id": "signal-publish",
+      "name": "Signal Publisher (D-05 Mint)",
+      "description": "Packages Alpha's research + Delta's trade results into paid Telegram signals channel. Formats: entry/exit/SL/TP with confidence scores.",
+      "tags": [
+        "telegram",
+        "signals",
+        "publishing",
+        "passive-income",
+        "revenue-engine"
+      ],
+      "examples": [
+        "Publish BTC LONG signal with entry $67,200, SL $66,800, TP $68,500, confidence 0.85",
+        "Generate weekly performance report for signal subscribers"
+      ],
+      "inputModes": ["application/json"],
+      "outputModes": ["application/json"]
+    },
+    {
+      "id": "consensus-vote",
+      "name": "Consensus Vote",
+      "description": "Submit a confidence-scored vote for the Consensus Arbiter",
+      "tags": ["consensus", "voting", "arbiter", "confidence"],
+      "examples": [
+        "Submit BUY signal with 0.87 confidence",
+        "Vote on trade execution timing"
+      ],
+      "inputModes": ["application/json"],
+      "outputModes": ["application/json"]
+    }
+  ]
+}

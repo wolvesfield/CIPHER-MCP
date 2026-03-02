@@ -1,0 +1,132 @@
+{
+  "mcpServers": {
+    "sqlite-audit-db": {
+      "command": "C:\\Users\\arcan_e9q9t\\CIPHER-MCP-temp\\.mcp_env\\python\\Scripts\\mcp-server-sqlite.exe",
+      "args": [
+        "--db-path",
+        "/absolute/path/to/your/audit_store.db"
+      ]
+    },
+    "filesystem": {
+      "command": "C:\\Users\\arcan_e9q9t\\CIPHER-MCP-temp\\.mcp_env\\node\\node_modules\\.bin\\mcp-server-filesystem.cmd",
+      "args": [
+        "/absolute/path/to/your/workspace"
+      ]
+    },
+    "fetch": {
+      "command": "C:\\Users\\arcan_e9q9t\\CIPHER-MCP-temp\\.mcp_env\\python\\Scripts\\mcp-server-fetch.exe",
+      "args": []
+    },
+    "github": {
+      "command": "C:\\Users\\arcan_e9q9t\\CIPHER-MCP-temp\\.mcp_env\\node\\node_modules\\.bin\\mcp-server-github.cmd",
+      "args": [],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_ENTERPRISE_TOKEN}"
+      }
+    },
+    "playwright": {
+      "command": "C:\\Users\\arcan_e9q9t\\CIPHER-MCP-temp\\.mcp_env\\node\\node_modules\\.bin\\playwright-mcp.cmd",
+      "args": []
+    },
+    "puppeteer": {
+      "command": "C:\\Users\\arcan_e9q9t\\CIPHER-MCP-temp\\.mcp_env\\node\\node_modules\\.bin\\mcp-server-puppeteer.cmd",
+      "args": []
+    },
+    "chrome-devtools": {
+      "command": "C:\\Users\\arcan_e9q9t\\CIPHER-MCP-temp\\.mcp_env\\node\\node_modules\\.bin\\chrome-devtools-mcp.cmd",
+      "args": []
+    },
+    "browser-devtools-generic": {
+      "command": "C:\\Users\\arcan_e9q9t\\CIPHER-MCP-temp\\.mcp_env\\node\\node_modules\\.bin\\browser-devtools-mcp.cmd",
+      "args": []
+    },
+    "tavily-search": {
+      "command": "C:\\Users\\arcan_e9q9t\\CIPHER-MCP-temp\\.mcp_env\\node\\node_modules\\.bin\\tavily-mcp.cmd",
+      "args": [],
+      "env": {
+        "TAVILY_API_KEY": "${TAVILY_API_KEY}"
+      }
+    },
+    "supabase-postgres": {
+      "command": "C:\\Users\\arcan_e9q9t\\CIPHER-MCP-temp\\.mcp_env\\node\\node_modules\\.bin\\mcp-server-supabase.cmd",
+      "args": [],
+      "env": {
+        "SUPABASE_ACCESS_TOKEN": "${SUPABASE_ACCESS_TOKEN}"
+      }
+    },
+    "desktop-commander": {
+      "command": "C:\\Users\\arcan_e9q9t\\CIPHER-MCP-temp\\.mcp_env\\node\\node_modules\\.bin\\desktop-commander.cmd",
+      "args": []
+    },
+    "generic-openapi": {
+      "command": "C:\\Users\\arcan_e9q9t\\CIPHER-MCP-temp\\.mcp_env\\node\\node_modules\\.bin\\mcp-openapi-schema-explorer.cmd",
+      "args": [
+        "/path/to/generic-swagger-or-openapi.json"
+      ]
+    },
+    "evm-blockchain": {
+      "command": "C:\\Users\\arcan_e9q9t\\CIPHER-MCP-temp\\.mcp_env\\node\\node_modules\\.bin\\evm-mcp-server.cmd",
+      "args": []
+    },
+    "tatum-blockchain": {
+      "command": "C:\\Users\\arcan_e9q9t\\CIPHER-MCP-temp\\.mcp_env\\node\\node_modules\\.bin\\blockchain-mcp.cmd",
+      "args": []
+    },
+    "dbhub-io": {
+      "command": "C:\\Users\\arcan_e9q9t\\CIPHER-MCP-temp\\.mcp_env\\node\\node_modules\\.bin\\dbhub.cmd",
+      "args": []
+    },
+    "context7": {
+      "command": "node",
+      "args": [
+        "/absolute/path/to/your/custom/context7/mcp-server.js"
+      ]
+    },
+    "serena": {
+      "command": "node",
+      "args": [
+        "/absolute/path/to/your/custom/serena/mcp-server.js"
+      ]
+    },
+    "docker-executor": {
+      "command": "C:\\Users\\arcan_e9q9t\\CIPHER-MCP-temp\\.mcp_env\\node\\node_modules\\.bin\\docker-mcp-server.cmd",
+      "args": []
+    },
+    "figma-remote": {
+      "url": "https://mcp.figma.com/mcp"
+    },
+    "mem0-memory": {
+      "command": "C:\\Users\\arcan_e9q9t\\CIPHER-MCP-temp\\.mcp_env\\node\\node_modules\\.bin\\mem0-mcp.cmd",
+      "args": [],
+      "env": {
+        "MEM0_API_KEY": "${MEM0_API_KEY}"
+      }
+    },
+    "python-secure-sandbox": {
+      "command": "C:\\Users\\arcan_e9q9t\\CIPHER-MCP-temp\\.mcp_env\\python\\Scripts\\mcp-python.exe",
+      "args": []
+    },
+    "github-enterprise-cloud": {
+      "command": "C:\\Users\\arcan_e9q9t\\CIPHER-MCP-temp\\.mcp_env\\node\\node_modules\\.bin\\mcp-server-github.cmd",
+      "args": [],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_ENTERPRISE_TOKEN}",
+        "GITHUB_API_URL": "${GITHUB_API_URL}"
+      }
+    },
+    "kubernetes-cluster": {
+      "command": "C:\\Users\\arcan_e9q9t\\CIPHER-MCP-temp\\.mcp_env\\node\\node_modules\\.bin\\kubernetes-mcp-server.cmd",
+      "args": [],
+      "env": {
+        "KUBECONFIG": "${KUBECONFIG}"
+      }
+    },
+    "solana-blockchain": {
+      "command": "C:\\Users\\arcan_e9q9t\\CIPHER-MCP-temp\\.mcp_env\\node\\node_modules\\.bin\\solana-mcp.cmd",
+      "args": [],
+      "env": {
+        "SOLANA_RPC_URL": "${SOLANA_RPC_URL}"
+      }
+    }
+  }
+}

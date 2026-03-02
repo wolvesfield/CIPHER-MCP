@@ -1,0 +1,33 @@
+# ============================================================
+# CIPHER OPS — General Container (Alpha/Bravo/Charlie/Delta)
+# Thin base image — cipher-ops source is mounted as volume at runtime.
+# Uses GENERAL_ID + GENERAL_PORT env vars to start correct General.
+# ============================================================
+FROM python:3.12-slim
+
+WORKDIR /app
+
+# System deps
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies from cipher-ops
+# This file is copied from cipher-ops/requirements.txt during deploy
+COPY requirements-general.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Source code + agent cards are mounted as volumes by docker-compose:
+#   ../cipher-ops/cipher_ops      → /app/cipher_ops
+#   ../cipher-ops/run_general.py  → /app/run_general.py
+#   ./arbiter/agent-cards          → /app/arbiter/agent-cards
+
+# Env defaults (overridden by docker-compose)
+ENV GENERAL_ID=alpha
+ENV GENERAL_PORT=8010
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s \
+    CMD curl -f http://localhost:${GENERAL_PORT}/health || exit 1
+
+CMD ["python", "run_general.py"]

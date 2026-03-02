@@ -1,0 +1,38 @@
+# ============================================================
+# CIPHER OPS — General Container Dependencies
+# Subset of cipher-ops requirements for General containers.
+# Copied from cipher-ops/requirements.txt during deploy.
+# ============================================================
+
+# --- CORE FRAMEWORK ---
+pydantic-ai[google]>=0.0.14
+pydantic>=2.5.0
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+python-dotenv>=1.0.0
+
+# --- MEMORY LAYER ---
+qdrant-client>=1.9.0
+redis>=5.0.0
+
+# --- AI MODEL CLIENTS ---
+google-generativeai>=0.8.0
+openai>=1.40.0
+ollama>=0.3.0
+anthropic>=0.45.0
+
+# --- TRADING (Delta needs these) ---
+alpaca-trade-api>=3.0.0
+python-binance>=1.0.19
+pandas>=2.1.0
+numpy>=1.26.0
+ta>=0.11.0
+
+# --- OBSERVABILITY ---
+logfire>=0.30.0
+structlog>=23.3.0
+
+# --- UTILITIES ---
+httpx>=0.27.0
+tenacity>=8.2.0
+aiofiles>=23.2.1

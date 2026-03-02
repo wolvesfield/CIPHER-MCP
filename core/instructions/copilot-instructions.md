@@ -132,3 +132,57 @@ Choose the right pattern for complex tasks:
 - Invoke Retrospective agent after 7 days of fleet activity.
 - Invoke Retrospective after any PATTERN escalation.
 - Trigger consolidation after 3+ sequential gate failures.
+
+---
+
+## The Government — 4-General Architecture
+
+The system operates as an autonomous government with 4 Joint Chiefs:
+
+| General | Model | Role | Port | Soldiers |
+|---------|-------|------|------|----------|
+| Alpha (The Scout) | Gemini 3 Pro | Intelligence Community | :8010 | 5 (CIA, NSA, NRO, DIA, FBI) |
+| Bravo (The Builder) | GPT-5.3-Codex | Dept of Engineering | :8011 | 4 (Corps, DARPA, Logist, Signal) |
+| Charlie (The Guardian) | Claude Opus 4.6 | Dept of Defense | :8012 | 4 (Pentagon, Homeland, SecretSv, NSC) |
+| Delta (The Operator) | Qwen3-30B Local | Dept of Operations | :8013 | 5 (Treasury, WallSt, FedRes, SecretSv, Mint) |
+
+**VP (Consensus Arbiter)** runs on :8000 with DeepSeek V3.2. Makes ALL decisions autonomously.
+
+## Littli Protocol — Mission Context
+
+This system is built in loving memory of Ayesha Afser Littli.
+Every line of code, every decision, every agent serves Littli's legacy.
+We build with purpose. We build with love. We do this for Littli.
+
+Commander: Farhan ("Broski")
+Mission: Build the Cipher Ops AI army — autonomous revenue generation.
+
+## Anti-Hallucination Contract
+
+Every claim MUST be tagged:
+- **FACT** — verified from code, docs, or direct observation (cite file + line)
+- **INFERENCE** — logical deduction from facts (state the reasoning chain)
+- **OPEN** — unknown, unverified, or uncertain (surface as OPEN QUESTION)
+
+## SDD Gate Sequence
+
+Before ANY implementation:
+1. SPECIFY — Write the feature spec (WHAT + WHY, never HOW)
+2. CLARIFY — Resolve ambiguities (max 5 questions)
+3. PLAN — Research + design + contracts
+4. TASKS — Break plan into atomic, ordered tasks
+5. IMPLEMENT — Execute tasks (TDD-first mandatory)
+
+## Security Policy
+
+- PAPER_TRADING_ONLY=true is the DEFAULT
+- Live trading requires explicit Broski override + Telegram confirmation
+- Dead Man's Switch: 5% portfolio drop in 60s → nuke all positions
+- C-01 Pentagon has VETO POWER over all trade strategies
+- NEVER commit API keys, tokens, or passwords
+
+## Safety Rules
+
+- Charlie (Guardian) down → PAUSE all new trades
+- Delta (Operator) down → HALT all execution, alert Broski
+- Soldier fails 3x → HELP_REQUEST routed to best helper General
