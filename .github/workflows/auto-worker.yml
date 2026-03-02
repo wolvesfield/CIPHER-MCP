@@ -1,0 +1,75 @@
+name: "🏛️ Government Auto-Worker"
+
+# Runs every 4 hours OR on manual trigger
+on:
+  schedule:
+    - cron: '0 */4 * * *'  # Every 4 hours
+  workflow_dispatch:        # Manual trigger from GitHub UI
+    inputs:
+      task:
+        description: 'Specific task to work on (leave blank for auto-pick)'
+        required: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  auto-work:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout CIPHER-MCP
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Checkout cipher-ops
+        uses: actions/checkout@v4
+        with:
+          repository: wolvesfield/cipher-ops
+          path: cipher-ops
+          token: ${{ secrets.PAT_TOKEN }}
+
+      - name: Read DAILY-LOG and pick next task
+        id: pick-task
+        run: |
+          echo "=== Reading DAILY-LOG.md ==="
+          cat DAILY-LOG.md
+
+          # Extract first unclaimed Critical task
+          TASK=$(grep -A0 '^\- \[ \]' DAILY-LOG.md | grep '🔥' -A999 | grep '^\- \[ \]' | head -1 || \
+                 grep -A0 '^\- \[ \]' DAILY-LOG.md | head -1)
+
+          if [ -z "${{ github.event.inputs.task }}" ]; then
+            echo "task=$TASK" >> $GITHUB_OUTPUT
+          else
+            echo "task=${{ github.event.inputs.task }}" >> $GITHUB_OUTPUT
+          fi
+          echo "Selected task: $TASK"
+
+      - name: Use Copilot to work on task
+        uses: github/copilot-workspace-action@v1
+        with:
+          task: ${{ steps.pick-task.outputs.task }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update DAILY-LOG.md
+        run: |
+          DATE=$(date -u +"%Y-%m-%d %H:%M UTC")
+          TASK="${{ steps.pick-task.outputs.task }}"
+
+          # Add to completed section
+          sed -i "/^### $(date -u +%Y-%m-%d)/a\\
+          \\
+          **Agent: GitHub Actions (Auto-Worker) — $DATE**\\
+          - ✅ $TASK" DAILY-LOG.md
+
+          git config user.name "cipher-auto-worker"
+          git config user.email "auto@cipher-ops.dev"
+          git add -A
+          git commit -m "auto: completed task — $TASK" || echo "No changes"
+          git push

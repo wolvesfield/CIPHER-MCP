@@ -1,0 +1,55 @@
+name: "🏛️ Daily Task Creator"
+
+# Creates GitHub Issues from DAILY-LOG.md tasks
+# Copilot Coding Agent auto-picks up issues labeled "copilot"
+on:
+  schedule:
+    - cron: '0 6 * * *'   # Every day at 6 AM UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  create-issues:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Parse DAILY-LOG.md and create issues
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "=== Parsing DAILY-LOG.md for unclaimed tasks ==="
+
+          # Extract Critical tasks that aren't done
+          grep '^\- \[ \]' DAILY-LOG.md | head -5 | while IFS= read -r line; do
+            # Clean the line
+            TASK=$(echo "$line" | sed 's/^- \[ \] //')
+
+            # Check if issue already exists
+            EXISTING=$(gh issue list --search "$TASK" --json number --jq length)
+            if [ "$EXISTING" = "0" ]; then
+              echo "Creating issue: $TASK"
+              gh issue create \
+                --title "$TASK" \
+                --body "Auto-created from DAILY-LOG.md. See repo root for full context.
+
+## Context
+Read these files before working:
+- \`DAILY-LOG.md\` — shared work log
+- \`AGENTS.md\` — rules and architecture
+- \`SUPER_ARCHITECTURE.md\` — system overview
+
+## Key Files
+Check \`cipher-ops/cipher_ops/soldiers/\` for soldier implementations.
+Check \`cipher-ops/cipher_ops/config.py\` for model routing.
+
+## When Done
+Update DAILY-LOG.md: move task to Completed under today's date." \
+                --label "copilot,auto-task"
+            else
+              echo "Issue already exists: $TASK"
+            fi
+          done

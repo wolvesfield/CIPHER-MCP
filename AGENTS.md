@@ -48,7 +48,13 @@ Use the corresponding files in `prompts/` for each step.
 
 ## Memory Contract (Read Before Every Session)
 
-At the start of every session, retrieve from Flowbaby / work-logs:
+At the start of every session, you MUST:
+1. **READ `DAILY-LOG.md`** — the shared work log. Check what's done, what's in progress, what's next.
+2. **CHECK "In Progress"** — if another agent is working on something, do NOT touch it.
+3. **CLAIM your task** — move it from "To Do" → "In Progress" with your agent name and timestamp.
+4. **LOG your work** — when done, write what you did under today's date in the Completed section.
+
+Also retrieve:
 1. Latest `work-logs/YYYY-MM-DD.md` — WHERE I LEFT OFF
 2. `docs/MODELS.md` — which model does what (do not improvise model assignments)
 3. `docs/INFRA.md` — hardware constraints (do not design beyond KVM8 limits)
