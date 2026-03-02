@@ -11,7 +11,7 @@ Based on: Flowbaby + Mem0 + Claude-Mem + OpenMemory + Pathway unified memory spe
 
 Before ANYTHING else (before code, before planning, before answering questions):
 
-1. Read the most recent file in `C:\Users\arcan_e9q9t\work-logs\`
+1. Read the most recent file in `${CIPHER_WORKLOG_DIR:-C:\Users\arcan_e9q9t\work-logs}\`
 2. Retrieve memory: `#flowbabyRetrieveMemory { "query": "daily work log where I left off yesterday blocked todo", "maxResults": 3 }`
 3. Display immediately:
    ```

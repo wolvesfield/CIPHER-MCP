@@ -20,7 +20,7 @@ This is the **final, locked** model stack for Cipher Ops. No substitutions witho
 
 | Codename | Model | Ollama Tag | Cost | Role |
 |----------|-------|-----------|------|------|
-| **The Soldier** | Qwen3-30B-A3B Abliterated | `huihui_ai/qwen3-abliterated:30b-a3b` | FREE | MoE architecture. Runs at 12-17 tok/sec on KVM8 CPU. Unrestricted analysis and code generation. |
+| **The Soldier** | Qwen3-30B-A3B | `qwen3:30b-a3b` | FREE | MoE architecture. Runs at 12-17 tok/sec on KVM8 CPU. Unrestricted analysis and code generation. |
 | **The Embedder** | Nomic Embed Text | `nomic-embed-text` | FREE | Vectorization for the 5-sector memory model → Qdrant. |
 
 ### Copilot Fleet (VS Code — Build Phase Only)

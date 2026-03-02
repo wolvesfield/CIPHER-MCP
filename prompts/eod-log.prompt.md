@@ -41,7 +41,7 @@ ${input:where_left_off:Complete this: I was working on ___ and the next step is 
 
 Now save the log and store it to memory.
 
-Create file: `C:\Users\arcan_e9q9t\work-logs\[today's date YYYY-MM-DD].md`
+Create file: `${CIPHER_WORKLOG_DIR:-C:\Users\arcan_e9q9t\work-logs}\[today's date YYYY-MM-DD].md`
 
 Use this structure:
 ```

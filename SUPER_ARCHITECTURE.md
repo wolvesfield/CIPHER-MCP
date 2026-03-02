@@ -24,7 +24,7 @@ Do these 4 steps before any work. No skipping.
 
 ```
 STEP 1 — Read today's log
-  Path: C:\Users\arcan_e9q9t\work-logs\YYYY-MM-DD.md (most recent file)
+  Path: ${CIPHER_WORKLOG_DIR:-C:\Users\arcan_e9q9t\work-logs}\YYYY-MM-DD.md (most recent file)
   OR: Y:\📁 Cipher Ops HQ\work-logs\YYYY-MM-DD.md
 
 STEP 2 — Retrieve memory
@@ -76,7 +76,7 @@ STEP 4 — Ask ONE question
 
 | Codename | Model | Tag |
 |----------|-------|-----|
-| **The Soldier** | Qwen3-30B-A3B Abliterated | `huihui_ai/qwen3-abliterated:30b-a3b` |
+| **The Soldier** | Qwen3-30B-A3B | `qwen3:30b-a3b` |
 | **The Embedder** | Nomic Embed Text | `nomic-embed-text` |
 
 ### VS Code Build Phase (GHEC — expires April 1, 2026)
@@ -201,7 +201,7 @@ The 13 specialist agents (all in `core/agents/`):
 | `Z:\` | ciphersDrive | Same 30TB, duplicate mount |
 | `J:\` | 2TB | Local media drive |
 
-**Work logs**: `C:\Users\arcan_e9q9t\work-logs\` (local) + `Y:\📁 Cipher Ops HQ\` (cloud backup)
+**Work logs**: `${CIPHER_WORKLOG_DIR:-C:\Users\arcan_e9q9t\work-logs}\` (source-of-truth) + optional `Y:\📁 Cipher Ops HQ\` cloud backup
 
 ---
 

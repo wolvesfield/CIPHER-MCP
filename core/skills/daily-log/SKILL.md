@@ -20,7 +20,7 @@ Designed for: ADHD · Amnesia · Autism · Neurodivergent working memory support
 **At the start of EVERY session — before any code, before any planning, before anything:**
 
 1. Retrieve the most recent daily log from memory
-2. Read the file from `C:\Users\arcan_e9q9t\work-logs\` (most recent date)
+2. Read the file from `${CIPHER_WORKLOG_DIR:-C:\Users\arcan_e9q9t\work-logs}\` (most recent date)
 3. Display it clearly with a warm, grounding greeting
 4. Ask: "Ready to continue, or do you want to start something new?"
 
@@ -38,7 +38,7 @@ Step 2: Retrieve from memory
   #flowbabyRetrieveMemory { "query": "daily work log yesterday where I left off", "maxResults": 3 }
 
 Step 3: Read most recent log file
-  Read: C:\Users\arcan_e9q9t\work-logs\[most-recent-date].md
+  Read: ${CIPHER_WORKLOG_DIR:-C:\Users\arcan_e9q9t\work-logs}\[most-recent-date].md
 
 Step 4: Display the "WHERE I LEFT OFF" section FIRST — big and clear
   "📍 WHERE YOU LEFT OFF:
@@ -63,7 +63,7 @@ Step 7: Ask
 
 When user says /eod, save everything done today.
 
-**File location:** `C:\Users\arcan_e9q9t\work-logs\YYYY-MM-DD.md`
+**File location:** `${CIPHER_WORKLOG_DIR:-C:\Users\arcan_e9q9t\work-logs}\YYYY-MM-DD.md`
 Use today's date in the filename.
 
 **Template:**
@@ -141,7 +141,7 @@ When user runs /eod, Copilot should:
    - Pull from any todos that changed status today
 
 3. **Save to file:**
-   - Create `C:\Users\arcan_e9q9t\work-logs\YYYY-MM-DD.md`
+   - Create `${CIPHER_WORKLOG_DIR:-C:\Users\arcan_e9q9t\work-logs}\YYYY-MM-DD.md`
    - Use exact template above
 
 4. **Store to memory:**
@@ -208,7 +208,7 @@ When displaying logs, always:
 
 ## LOG FILE MANAGEMENT
 
-- All logs: `C:\Users\arcan_e9q9t\work-logs\YYYY-MM-DD.md`
+- All logs: `${CIPHER_WORKLOG_DIR:-C:\Users\arcan_e9q9t\work-logs}\YYYY-MM-DD.md`
 - Keep all logs permanently — they are your external memory
 - Never delete a log file
 - Weekly logs auto-generate from daily logs (on Monday)

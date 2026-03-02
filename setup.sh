@@ -8,7 +8,7 @@
 # Usage: bash setup.sh
 # One-liner from scratch: bash <(curl -sSL https://raw.githubusercontent.com/wolvesfield/CIPHER-MCP/main/setup.sh)
 # =============================================================================
-set -e
+set -euo pipefail
 
 echo -e "\033[1;36m🚀 Initializing CIPHER-MCP Master Environment...\033[0m"
 
@@ -34,6 +34,7 @@ pip3 install python-dotenv --quiet
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 COPILOT_GLOBAL_DIR="$HOME/.copilot"
 COPILOT_CONFIG_DIR="$HOME/.config/copilot"
+WORKLOG_DIR="${CIPHER_WORKLOG_DIR:-$HOME/work-logs}"
 
 # 2. Create target directories
 echo "Preparing workspace directories..."
@@ -41,7 +42,14 @@ mkdir -p "$COPILOT_CONFIG_DIR/agents"
 mkdir -p "$COPILOT_GLOBAL_DIR/skills"
 mkdir -p "$HOME/vs-code-agents/.github/prompts"
 mkdir -p "$HOME/agent-output"
+mkdir -p "$WORKLOG_DIR"
 mkdir -p "$REPO_ROOT/work-logs"
+
+echo "Syncing work logs (source-of-truth: $WORKLOG_DIR)..."
+python3 "$REPO_ROOT/scripts/sync_worklogs.py"
+
+echo "Running doctor checks..."
+python3 "$REPO_ROOT/scripts_doctor.py"
 
 # 3. Setup Global Instructions
 echo "Linking instructions..."
@@ -85,16 +93,11 @@ if [ ! -f ".env" ]; then
     cp .env.example .env
 fi
 
-python3 bridge/mcp_enterprise_compiler.py
+if ! python3 bridge/mcp_enterprise_compiler.py --validate-env; then
+    echo -e "\033[1;33m⚠️ Env validation failed (placeholders likely still present). Continuing setup.\033[0m"
+fi
 
-echo -e "\033[1;35m✨ SUCCESS: Your Universal AI Master Repo is fully active.\033[0m"
-echo -e "\033[1;32m   - 13 Agents Linked\033[0m"
-echo -e "\033[1;32m   - 9 Skills Linked\033[0m"
-echo -e "\033[1;32m   - 28 MCP Servers Compiled to mcp-compiled.json\033[0m"
-echo -e "\033[1;32m   - Default onboarding profile generated: mcp-master.json\033[0m"
-echo -e "\033[1;32m   - Wing profiles generated: mcp-core/dev/hacker/trading.json\033[0m"
-echo -e "\033[1;32m   - Workspace: ~/agent-output/ ready.\033[0m"
-echo -e "\033[1;33mNOTE: Point your IDE/Host to $REPO_ROOT/mcp-master.json for selective tool activation.\033[0m"
+python3 bridge/mcp_enterprise_compiler.py
 # 8. Install Arbiter / Bridge Python dependencies
 echo -e "\033[1;33m🤖 Installing Consensus Arbiter dependencies...\033[0m"
 pip3 install fastapi uvicorn httpx pydantic --quiet
@@ -155,6 +158,7 @@ echo -e "\033[1;32m   ✅ 28 MCP Servers compiled → mcp-compiled.json\033[0m"
 echo -e "\033[1;32m   ✅ Role profiles: mcp-core / mcp-dev / mcp-hacker / mcp-trading\033[0m"
 echo -e "\033[1;32m   ✅ Arbiter deps installed (FastAPI, uvicorn, httpx, pydantic)\033[0m"
 echo -e "\033[1;32m   ✅ SUPER_ARCHITECTURE.md auto-loads in every Copilot session\033[0m"
+echo -e "\033[1;32m   ✅ Work-log source-of-truth: $WORKLOG_DIR\033[0m"
 echo ""
 echo -e "\033[1;33mNEXT STEPS:\033[0m"
 echo "  1. Fill in .env: nano $REPO_ROOT/.env"

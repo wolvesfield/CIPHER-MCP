@@ -5,7 +5,7 @@
 
 ## Overview
 
-The Trading Wing operates a 5-agent adversarial pipeline. No single agent can approve a trade alone. The Bullish and Bearish Researchers debate every signal before the Execution Hands touch an order. All trades default to **paper mode** until Commander flips `PAPER_TRADING_ONLY=false`.
+The Trading Wing operates a 5-agent adversarial pipeline. No single agent can approve a trade alone. The Bullish and Bearish Researchers debate every signal before the Execution Hands touch an order. All trades default to **paper mode** until Commander flips `PAPER_TRADING_ONLY=false` **and** sets `LIVE_TRADING_ACK=YES_I_ACCEPT_LIVE_TRADING_RISK`.
 
 ---
 
@@ -46,7 +46,7 @@ The Trading Wing operates a 5-agent adversarial pipeline. No single agent can ap
   - Smart Order Routing (SOR): TWAP / VWAP / Iceberg algorithms to hide footprint from MEV bots.
   - All trades routed to **paper trading virtual database** by default.
 - **Default Mode**: `PAPER_TRADING_ONLY=true` — all signals simulate against live prices, no real orders.
-- **Live Mode**: Commander explicitly sets `PAPER_TRADING_ONLY=false` in `.env` + confirms via Telegram.
+- **Live Mode**: Commander explicitly sets `PAPER_TRADING_ONLY=false` and `LIVE_TRADING_ACK=YES_I_ACCEPT_LIVE_TRADING_RISK` in `.env` + confirms via Telegram.
 - **Exchanges**: Binance (crypto), Kraken (alt), Alpaca (US equities) — configured in `.env`.
 
 ---

@@ -11,7 +11,7 @@ Today is [current date and day of week].
 
 ## Step 1 — Retrieve yesterday's context
 
-Read the most recent file from: `C:\Users\arcan_e9q9t\work-logs\`
+Read the most recent file from: `${CIPHER_WORKLOG_DIR:-C:\Users\arcan_e9q9t\work-logs}\`
 Also retrieve from memory:
 ```
 #flowbabyRetrieveMemory {

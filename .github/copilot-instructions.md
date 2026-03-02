@@ -6,10 +6,14 @@
 ## ⚡ READ FIRST — EVERY SESSION
 
 **MANDATORY BOOT — do this before anything else:**
-1. Read `SUPER_ARCHITECTURE.md` (repo root) — single source of truth for everything
-2. Read `work-logs/YYYY-MM-DD.md` (most recent) — WHERE Commander left off
-3. Display orientation block (see `docs/OPS-RUNBOOK.md` Start of Day section)
-4. Ask ONE question. Wait for response. Do not proceed until Commander responds.
+1. Read `DAILY-LOG.md` (repo root) — shared work log across ALL agents
+2. Read `SUPER_ARCHITECTURE.md` (repo root) — single source of truth for everything
+3. Read `work-logs/YYYY-MM-DD.md` (most recent) — WHERE Commander left off
+4. Check "In Progress" in DAILY-LOG.md — don't duplicate another agent's work
+5. Display orientation block (see `docs/OPS-RUNBOOK.md` Start of Day section)
+6. Ask ONE question. Wait for response. Do not proceed until Commander responds.
+
+> **DAILY-LOG.md is the shared brain.** Read it. Write to it. Every session.
 
 > Commander has ADHD + autism + amnesia. Context restoration is not optional.
 > Skip the boot sequence = fail the mission.
@@ -108,7 +112,7 @@ Priority: self-hosted Actions runner on KVM8, all agent Python files in cipher-o
 
 ## MEMORY + WORK LOG
 
-- Work logs: `C:\Users\arcan_e9q9t\work-logs\` + `Y:\📁 Cipher Ops HQ\`
+- Work logs source-of-truth: `${CIPHER_WORKLOG_DIR:-C:\Users\arcan_e9q9t\work-logs}\` (optional cloud backup remains in `Y:\📁 Cipher Ops HQ\`)
 - 5-sector memory: Episodic / Semantic / Procedural / Emotional / Reflective
 - Max 1000 tokens injected per context — cognitive load protection
 - Store task state before EVERY context switch (ADHD support)

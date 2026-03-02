@@ -40,12 +40,19 @@ $CopilotGlobalDir = "$env:USERPROFILE\.copilot"
 $CopilotConfigDir = "$env:USERPROFILE\.config\copilot"
 $TargetPromptsDir = "$env:USERPROFILE\vs-code-agents\.github\prompts"
 $AgentOutputDir   = "$env:USERPROFILE\agent-output"
+$WorkLogDir       = if ($env:CIPHER_WORKLOG_DIR) { $env:CIPHER_WORKLOG_DIR } else { "$env:USERPROFILE\work-logs" }
 
 # 2. Create target directories
 Write-Host "Preparing workspace directories..."
-foreach ($d in @("$CopilotConfigDir\agents", "$CopilotGlobalDir\skills", $TargetPromptsDir, $AgentOutputDir, "$RepoRoot\work-logs")) {
+foreach ($d in @("$CopilotConfigDir\agents", "$CopilotGlobalDir\skills", $TargetPromptsDir, $AgentOutputDir, "$RepoRoot\work-logs", $WorkLogDir)) {
     if (-not (Test-Path $d)) { New-Item -ItemType Directory -Path $d -Force | Out-Null }
 }
+
+Write-Host "Syncing work logs (source-of-truth: $WorkLogDir)..."
+python "$RepoRoot\scripts\sync_worklogs.py"
+
+Write-Host "Running doctor checks..."
+python "$RepoRoot\scripts_doctor.py"
 
 # 3. Setup Global Instructions
 Write-Host "Linking instructions..."
@@ -89,6 +96,12 @@ if (-not (Test-Path ".env")) {
     Copy-Item ".env.example" ".env"
 }
 
+try {
+    python bridge/mcp_enterprise_compiler.py --validate-env
+} catch {
+    Write-Host "⚠️ Env validation failed (placeholders likely still present). Continuing setup." -ForegroundColor Yellow
+}
+
 python bridge/mcp_enterprise_compiler.py
 
 Write-Host "✨ SUCCESS: Your Universal AI Master Repo is fully active." -ForegroundColor Cyan
@@ -99,7 +112,6 @@ Write-Host "   - Default onboarding profile generated: mcp-master.json"
 Write-Host "   - Wing profiles generated: mcp-core/dev/hacker/trading.json"
 Write-Host "   - Workspace: $AgentOutputDir ready."
 Write-Host "NOTE: Point your IDE/Host to $RepoRoot\mcp-master.json for selective tool activation." -ForegroundColor Yellow
-python mcp_enterprise_compiler.py
 
 # 8. Install Arbiter / Bridge Python dependencies
 Write-Host "🤖 Installing Consensus Arbiter dependencies..." -ForegroundColor Yellow
@@ -160,6 +172,7 @@ Write-Host "   ✅ 28 MCP Servers compiled -> mcp-compiled.json" -ForegroundColo
 Write-Host "   ✅ Role profiles: mcp-core / mcp-dev / mcp-hacker / mcp-trading" -ForegroundColor Green
 Write-Host "   ✅ Arbiter deps installed (FastAPI, uvicorn, httpx, pydantic)" -ForegroundColor Green
 Write-Host "   ✅ SUPER_ARCHITECTURE.md auto-loads in every Copilot session" -ForegroundColor Green
+Write-Host "   ✅ Work-log source-of-truth: $WorkLogDir" -ForegroundColor Green
 Write-Host ""
 Write-Host "NEXT STEPS:" -ForegroundColor Yellow
 Write-Host "  1. Fill in .env: notepad $RepoRoot\.env"
