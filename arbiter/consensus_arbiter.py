@@ -874,6 +874,11 @@ async def health():
     }
 
 
+@app.get("/health/live")
+async def health_live():
+    return {"status": "ok", "arbiter": "online"}
+
+
 @app.get("/generals")
 async def list_generals():
     return {

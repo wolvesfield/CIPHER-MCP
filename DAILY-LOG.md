@@ -77,6 +77,15 @@
 - ✅ Verified: Arbiter online, 4 Generals healthy, 18 soldiers, Redis connected
 - ✅ Created mac-setup.sh script for M3 MacBook
 
+**Agent: Copilot CLI (GPT-5.3-Codex)**
+- ✅ Synced OpenClaw model keys into `~/.openclaw/.env` and `~/.openclaw/openclaw.json` env block
+- ✅ Upgraded `bridge/mcp_a2a_bridge.py` to FastMCP SSE transport with `/sse` + `/messages` and kept `/health`
+- ✅ Wired bridge MCP tools to list/invoke all 18 Cipher Ops soldiers from `/opt/cipher-ops`
+- ✅ Updated `docker/Dockerfile.bridge` to install `fastmcp`
+- ✅ Rebuilt/restarted `mcp-bridge`; verified `http://127.0.0.1:8001/openapi.json` contains `/sse` and `/messages`
+- ✅ Ran VPS maintenance checks: `scripts/sync_worklogs.py`, `scripts_doctor.py`, `setup/doctor.py` (PASS)
+- ✅ Restarted `openclaw-gateway.service` after env/config updates
+
 **Previous Sessions (Claude Code):**
 - ✅ Built full Government architecture (plan + 10-step implementation)
 - ✅ Created 18 soldiers across 4 divisions (Alpha/Bravo/Charlie/Delta)

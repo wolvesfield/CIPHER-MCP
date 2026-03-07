@@ -6,6 +6,7 @@ COPY . /app
 
 RUN pip install --no-cache-dir \
     fastapi \
+    fastmcp \
     "uvicorn[standard]" \
     httpx \
     pydantic
